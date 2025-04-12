@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Students</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #4f46e5;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .logout-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .logout-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        .dashboard-content {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+        }
+        .sidebar {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            color: #333;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: #f0f0f7;
+            color: #4f46e5;
+        }
+        .sidebar-menu a.active {
+            font-weight: bold;
+            border-left: 3px solid #4f46e5;
+        }
+        .menu-icon {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        .menu-badge {
+            background-color: #4f46e5;
+            color: white;
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            min-width: 18px;
+            text-align: center;
+        }
+        .main-content {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            min-height: 600px;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #4338ca;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background-color: #f7f7f7;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        .action-btn {
+            padding: 0.25rem 0.5rem;
+            margin-right: 0.25rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .edit-btn {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .delete-btn {
+            background-color: #ef4444;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Student Management</h1>
+        <div>
+            <span id="admin-username">Admin</span>
+            <button id="logout-btn" class="logout-btn">Logout</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="dashboard-content">
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="admin-dashboard.html">
+                            <span class="menu-item-content">
+                                <i class="menu-icon">📊</i>
+                                Dashboard
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="active">
+                            <span class="menu-item-content">
+                                <i class="menu-icon">📋</i>
+                                All Students
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="add-student.html">
+                            <span class="menu-item-content">
+                                <i class="menu-icon">➕</i>
+                                Add Student
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="admin.html">
+                            <span class="menu-item-content">
+                                <i class="menu-icon">👨‍💼</i>
+                                Admin
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="main-content">
+                <div class="section-header">
+                    <h2>All Students</h2>
+                    <a href="add-student.html" class="btn">Add Student</a>
+                </div>
+                
+                <div class="student-controls" style="display: flex; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
+                    <div class="search-filter-container" style="display: flex; gap: 10px; flex: 2;">
+                        <div class="search-box" style="position: relative; flex: 3;">
+                            <input type="text" id="student-search" placeholder="Search by name, roll number, or mobile..." style="width: 100%; padding-right: 40px;">
+                            <button id="search-btn" class="btn" style="position: absolute; right: 0; top: 0; border-radius: 0 4px 4px 0;">🔍</button>
+                        </div>
+                        <div class="filter-box" style="flex: 1;">
+                            <select id="student-filter" style="width: 100%;">
+                                <option value="">All Students</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="export-container">
+                        <button id="export-csv-btn" class="btn" style="background-color: #22c55e;">Export to CSV</button>
+                        <button id="print-students-btn" class="btn" style="background-color: #6366f1;">Print List</button>
+                    </div>
+                </div>
+                
+                <div class="table-container" style="overflow-x: auto; margin-bottom: 1rem; border: 1px solid #eee; border-radius: 4px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="select-all-students"> All</th>
+                                <th>Name <span class="sort-icon" data-sort="name">↕️</span></th>
+                                <th>Roll Number <span class="sort-icon" data-sort="roll">↕️</span></th>
+                                <th>Mobile <span class="sort-icon" data-sort="mobile">↕️</span></th>
+                                <th>Email</th>
+                                <th>Gender</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students-table">
+                            <tr><td colspan="8" style="text-align: center;">Loading students data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="pagination" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                    <div>
+                        <button id="prev-page" class="btn" style="background-color: #4b5563;">&laquo; Previous</button>
+                        <span id="page-info" style="margin: 0 1rem;">Page 1 of 1</span>
+                        <button id="next-page" class="btn" style="background-color: #4b5563;">Next &raquo;</button>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label for="page-size">Show:</label>
+                        <select id="page-size">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        <span>entries</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Supabase client
+        const supabaseUrl = 'YOUR_SUPABASE_URL';
+        const supabaseKey = 'YOUR_SUPABASE_KEY';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // Load students data
+        async function loadStudents() {
+            try {
+                const { data, error } = await supabase
+                    .from('students')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                displayStudents(data);
+            } catch (error) {
+                console.error('Error loading students:', error.message);
+                document.getElementById('students-table').innerHTML = 
+                    `<tr><td colspan="8" style="text-align: center; color: red;">Error loading students data. Please try again.</td></tr>`;
+            }
+        }
+        
+        // Display students in the table
+        function displayStudents(students) {
+            const tableBody = document.getElementById('students-table');
+            if (!students || students.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align: center;">No students found</td></tr>`;
+                return;
+            }
+            
+            let html = '';
+            students.forEach(student => {
+                html += `
+                <tr>
+                    <td><input type="checkbox" class="student-checkbox" data-id="${student.id}"></td>
+                    <td>${student.name || ''}</td>
+                    <td>${student.roll_number || ''}</td>
+                    <td>${student.mobile || ''}</td>
+                    <td>${student.email || ''}</td>
+                    <td>${student.gender || ''}</td>
+                    <td><span class="status-badge ${student.status || 'active'}">${student.status || 'Active'}</span></td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="${student.id}">Edit</button>
+                        <button class="action-btn delete-btn" data-id="${student.id}">Delete</button>
+                    </td>
+                </tr>
+                `;
+            });
+            
+            tableBody.innerHTML = html;
+            
+            // Add event listeners for action buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const studentId = this.getAttribute('data-id');
+                    // Redirect to edit page or open edit modal
+                    alert(`Edit student with ID: ${studentId}`);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const studentId = this.getAttribute('data-id');
+                    if (confirm('Are you sure you want to delete this student?')) {
+                        deleteStudent(studentId);
+                    }
+                });
+            });
+        }
+        
+        // Delete student function
+        async function deleteStudent(id) {
+            try {
+                const { error } = await supabase
+                    .from('students')
+                    .delete()
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                alert('Student deleted successfully');
+                loadStudents(); // Reload the table
+            } catch (error) {
+                console.error('Error deleting student:', error.message);
+                alert(`Error deleting student: ${error.message}`);
+            }
+        }
+        
+        // Search functionality
+        document.getElementById('search-btn').addEventListener('click', function() {
+            const searchTerm = document.getElementById('student-search').value.trim().toLowerCase();
+            if (!searchTerm) {
+                loadStudents();
+                return;
+            }
+            
+            searchStudents(searchTerm);
+        });
+        
+        async function searchStudents(term) {
+            try {
+                const { data, error } = await supabase
+                    .from('students')
+                    .select('*')
+                    .or(`name.ilike.%${term}%,roll_number.ilike.%${term}%,mobile.ilike.%${term}%,email.ilike.%${term}%`);
+                
+                if (error) throw error;
+                
+                displayStudents(data);
+            } catch (error) {
+                console.error('Error searching students:', error.message);
+                document.getElementById('students-table').innerHTML = 
+                    `<tr><td colspan="8" style="text-align: center; color: red;">Error searching students. Please try again.</td></tr>`;
+            }
+        }
+        
+        // Filter functionality
+        document.getElementById('student-filter').addEventListener('change', function() {
+            const filterValue = this.value.trim().toLowerCase();
+            if (!filterValue) {
+                loadStudents();
+                return;
+            }
+            
+            filterStudents(filterValue);
+        });
+        
+        async function filterStudents(filter) {
+            try {
+                let query = supabase.from('students').select('*');
+                
+                if (filter === 'active' || filter === 'inactive') {
+                    query = query.eq('status', filter);
+                } else if (filter === 'male' || filter === 'female') {
+                    query = query.eq('gender', filter);
+                }
+                
+                const { data, error } = await query;
+                
+                if (error) throw error;
+                
+                displayStudents(data);
+            } catch (error) {
+                console.error('Error filtering students:', error.message);
+                document.getElementById('students-table').innerHTML = 
+                    `<tr><td colspan="8" style="text-align: center; color: red;">Error filtering students. Please try again.</td></tr>`;
+            }
+        }
+        
+        // Export to CSV
+        document.getElementById('export-csv-btn').addEventListener('click', function() {
+            exportToCSV();
+        });
+        
+        async function exportToCSV() {
+            try {
+                const { data, error } = await supabase
+                    .from('students')
+                    .select('*');
+                
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    alert('No data to export');
+                    return;
+                }
+                
+                // Convert data to CSV
+                const headers = Object.keys(data[0]);
+                const csvContent = [
+                    headers.join(','),
+                    ...data.map(row => headers.map(field => JSON.stringify(row[field] || '')).join(','))
+                ].join('\n');
+                
+                // Create download link
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'students.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                console.error('Error exporting to CSV:', error.message);
+                alert(`Error exporting to CSV: ${error.message}`);
+            }
+        }
+        
+        // Print functionality
+        document.getElementById('print-students-btn').addEventListener('click', function() {
+            window.print();
+        });
+        
+        // Initialize the page
+        loadStudents();
+        
+        // Logout functionality
+        document.getElementById('logout-btn').addEventListener('click', function() {
+            // Implement logout logic here
+            supabase.auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        });
+    });
+    </script>
+</body>
+</html>
