@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feni South-East College Results 2024</title>
+    <link rel="stylesheet" href="./style1.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Feni Model High School</h1>
+        <p>Annual Examination Report Card-2024</p>
+    </div>
+
+    <div class="container">
+        <div class="filter-container">
+            
+            <input type="text" id="searchBox" class="search-box hidden" placeholder="Search by Name, Roll, or Reg No" oninput="filterStudentList()">
+        </div>
+
+        <div id="studentList" class="student-list"></div>
+    </div>
+
+    <script>
+        const check_android_web_ios_ID = '10zFu-vb_5Grk-tdwLmslTOrEzBtWyD958tkODji1fho';
+        const exam_annual = 'exam_publish';
+        const errorfix = `https://docs.google.com/spreadsheets/d/${check_android_web_ios_ID}/export?format=csv&sheet=${exam_annual}`;
+
+        let students = [];
+        let headers = [];
+        let SUBJECT_MAP = {};
+        let authenticatedStudents = new Set();
+
+        async function loadData() {
+            try {
+                const response = await fetch(errorfix);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const csvData = await response.text();
+                const rows = csvData.split('\n').filter(row => row.trim() !== '');
+
+                // Process headers
+                headers = rows[0].split(',').map(h => h.trim().replace(/"/g, '')); 
+
+                // Dynamically generate SUBJECT_MAP
+                generateSubjectMap(headers);
+
+                // Process student data
+                students = rows.slice(1).map(row => {
+                    const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    const student = {};
+                    headers.forEach((header, index) => {
+                        const cleanHeader = header.replace(/\*/g, '').trim().replace(/ /g, '_').toLowerCase();
+                        student[cleanHeader] = values[index] ? values[index].replace(/(^"|"$)/g, '').trim() : '';
+                    });
+                    return student;
+                });
+
+                renderStudentList(students);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('ডেটা লোড করতে সমস্যা হয়েছে! অনুগ্রহ করে আবার চেষ্টা করুন।');
+            }
+        }
+
+        function generateSubjectMap(headers) {
+            const subjects = new Set();
+            headers.forEach(header => {
+                const match = header.match(/^(.*?)(_CQ|_MCQ|_Practical|_Total|_GPA)$/);
+                if (match) {
+                    subjects.add(match[1]);
+                }
+            });
+
+            subjects.forEach(subject => {
+                SUBJECT_MAP[subject] = {
+                    CQ: headers.find(h => h.includes(`${subject}_CQ`)) || '',
+                    MCQ: headers.find(h => h.includes(`${subject}_MCQ`)) || '',
+                    Practical: headers.find(h => h.includes(`${subject}_Practical`)) || '',
+                    Total: headers.find(h => h.includes(`${subject}_Total`)) || '',
+                    GPA: headers.find(h => h.includes(`${subject}_GPA`)) || ''
+                };
+            });
+        }
+        
+        // Create a reusable function for generating student cards
+        function createStudentCard(student) {
+            const card = document.createElement('div');
+            card.className = 'student-card';
+            card.innerHTML = `
+                <h3>${student.name || 'N/A'}</h3>
+                <p>Roll: ${student.roll || 'N/A'}</p>
+                <p>IID No: ${student.iid || 'N/A'}</p>
+            `;
+            card.onclick = () => showMarksheet(student);
+            return card;
+        }
+
+        function renderStudentList(studentsToRender) {
+            const container = document.getElementById('studentList');
+            container.innerHTML = '';
+            
+            studentsToRender.forEach(student => {
+                container.appendChild(createStudentCard(student));
+            });
+        }
+
+        function filterStudentList() {
+            const query = document.getElementById('searchBox').value.toLowerCase();
+            const filteredStudents = students.filter(student => {
+                return (student.name && student.name.toLowerCase().includes(query)) ||
+                       (student.roll && student.roll.toLowerCase().includes(query)) ||
+                       (student.iid && student.iid.toLowerCase().includes(query));
+            });
+            renderStudentList(filteredStudents);
+        }
+
+        function showMarksheet(student) {
+            if (student.iid) {
+                // Pass the iid number as iid parameter to the details page
+                window.location.href = `./details.html?iid=${encodeURIComponent(student.iid)}`;
+            }
+        }
+
+        // Initialize and set up event handlers
+        window.addEventListener('DOMContentLoaded', () => {
+            // Start loading data immediately
+            loadData();
+            
+            // Show search box after data is loaded
+            document.getElementById('searchBox').classList.remove('hidden');
+            
+            // Set up security measures
+            setupSecurity();
+        });
+        
+        // Consolidate security measures into a single function
+        function setupSecurity() {
+            // Prevent viewing HTML source code
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            
+            document.addEventListener('keydown', e => {
+                if ((e.ctrlKey && ['u', 's', 'p', 'Shift', 'I'].includes(e.key)) || e.key === 'F12') {
+                    e.preventDefault();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

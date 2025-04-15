@@ -93,28 +93,6 @@
             min-width: 18px;
             text-align: center;
         }
-        .submenu {
-            list-style: none;
-            padding-left: 2rem;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-        .submenu.active {
-            max-height: 500px;
-        }
-        .has-submenu {
-            position: relative;
-        }
-        .has-submenu::after {
-            content: '\25BE';
-            position: absolute;
-            right: 1rem;
-            transition: transform 0.3s;
-        }
-        .has-submenu.active::after {
-            transform: rotate(180deg);
-        }
         .main-content {
             background-color: white;
             border-radius: 8px;
@@ -240,6 +218,23 @@
         .tab-panel.active {
             display: block;
         }
+        .search-box {
+            display: flex;
+            margin-bottom: 1rem;
+            gap: 0.5rem;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -264,24 +259,19 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="has-submenu" data-tab="students">
+                        <a href="#" data-tab="students-list">
                             <span class="menu-item-content">
-                                <i class="menu-icon">👨‍🎓</i>
-                                Students
+                                <i class="menu-icon">📋</i>
+                                Student List
                             </span>
                             <span class="menu-badge" id="students-count">0</span>
                         </a>
-                        <ul class="submenu">
-                            <li><a href="#" data-tab="all-students"><i class="menu-icon">📋</i> All Students</a></li>
-                            <li><a href="#" data-tab="add-student"><i class="menu-icon">➕</i> Add Student</a></li>
-                            <li><a href="#" data-tab="import-students"><i class="menu-icon">📥</i> Import Students</a></li>
-                        </ul>
                     </li>
                     <li>
-                        <a href="#" data-tab="settings">
+                        <a href="#" data-tab="add-student">
                             <span class="menu-item-content">
-                                <i class="menu-icon">⚙️</i>
-                                Settings
+                                <i class="menu-icon">➕</i>
+                                Add Student
                             </span>
                         </a>
                     </li>
@@ -295,14 +285,10 @@
                         <h2>Dashboard Overview</h2>
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
                         <div style="background-color: #e0f2fe; padding: 1.5rem; border-radius: 8px;">
                             <h3 style="margin-top: 0;">Total Students</h3>
                             <p id="total-students" style="font-size: 2rem; font-weight: bold; margin: 0;">0</p>
-                        </div>
-                        <div style="background-color: #fef3c7; padding: 1.5rem; border-radius: 8px;">
-                            <h3 style="margin-top: 0;">Total Admins</h3>
-                            <p id="total-admins" style="font-size: 2rem; font-weight: bold; margin: 0;">0</p>
                         </div>
                         <div style="background-color: #dcfce7; padding: 1.5rem; border-radius: 8px;">
                             <h3 style="margin-top: 0;">Last Login</h3>
@@ -320,122 +306,53 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
+                                    <th>Father</th>
                                     <th>Roll Number</th>
-                                    <th>Mobile</th>
+                                    <th>Class</th>
+                                    <th>Section</th>
+                                    <th>IID</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="recent-students-table">
-                                <tr><td colspan="4" style="text-align: center;">Loading...</td></tr>
+                                <tr><td colspan="7" style="text-align: center;">Loading...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
                 
-                <!-- Students Panel -->
-                <div id="students-panel" class="tab-panel">
+                <!-- Students List Panel -->
+                <div id="students-list-panel" class="tab-panel">
                     <div class="section-header">
                         <h2>Manage Students</h2>
-                        <button id="add-student-btn" class="btn">Add Student</button>
+                        <button id="add-new-student-btn" class="btn">Add Student</button>
                     </div>
                     
-                    <div class="student-controls">
-                        <div class="search-filter-container">
-                            <div class="search-box">
-                                <input type="text" id="student-search" placeholder="Search students...">
-                                <button id="search-btn" class="btn">Search</button>
-                            </div>
-                            <div class="filter-box">
-                                <select id="student-filter">
-                                    <option value="">All Students</option>
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="export-container">
-                            <button id="export-csv-btn" class="btn">Export to CSV</button>
-                        </div>
-                    </div>
-                    
-                    <table>
-                        <thead>
-                            <tr>
-                                <th><input type="checkbox" id="select-all-students"> All</th>
-                                <th>Name <span class="sort-icon" data-sort="name">↕️</span></th>
-                                <th>Roll Number <span class="sort-icon" data-sort="roll">↕️</span></th>
-                                <th>Mobile <span class="sort-icon" data-sort="mobile">↕️</span></th>
-                                <th>Student ID <span class="sort-icon" data-sort="id">↕️</span></th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="students-table">
-                            <tr><td colspan="7" style="text-align: center;">Loading...</td></tr>
-                        </tbody>
-                    </table>
-                    
-                    <div class="pagination">
-                        <button id="prev-page" class="btn">Previous</button>
-                        <span id="page-info">Page 1 of 1</span>
-                        <button id="next-page" class="btn">Next</button>
-                        <select id="page-size">
-                            <option value="10">10 per page</option>
-                            <option value="25">25 per page</option>
-                            <option value="50">50 per page</option>
-                            <option value="100">100 per page</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <!-- All Students Panel -->
-                <div id="all-students-panel" class="tab-panel">
-                    <div class="section-header">
-                        <h2>All Students</h2>
-                        <button id="add-student-btn-alt" class="btn">Add Student</button>
-                    </div>
-                    
-                    <div class="student-controls" style="display: flex; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
-                        <div class="search-filter-container" style="display: flex; gap: 10px; flex: 2;">
-                            <div class="search-box" style="position: relative; flex: 3;">
-                                <input type="text" id="student-search" placeholder="Search by name, roll number, or mobile..." style="width: 100%; padding-right: 40px;">
-                                <button id="search-btn" class="btn" style="position: absolute; right: 0; top: 0; border-radius: 0 4px 4px 0;">🔍</button>
-                            </div>
-                            <div class="filter-box" style="flex: 1;">
-                                <select id="student-filter" style="width: 100%;">
-                                    <option value="">All Students</option>
-                                    <option value="active">Active</option>
-                                    <option value="inactive">Inactive</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="export-container">
-                            <button id="export-csv-btn" class="btn" style="background-color: #22c55e;">Export to CSV</button>
-                            <button id="print-students-btn" class="btn" style="background-color: #6366f1;">Print List</button>
-                        </div>
+                    <div class="search-box">
+                        <input type="text" id="student-search" placeholder="Search by name, roll number, or IID...">
+                        <button id="search-btn" class="btn">Search</button>
                     </div>
                     
                     <div class="table-container" style="overflow-x: auto; margin-bottom: 1rem; border: 1px solid #eee; border-radius: 4px;">
                         <table>
                             <thead>
                                 <tr>
-                                    <th><input type="checkbox" id="select-all-students"> All</th>
-                                    <th>Name <span class="sort-icon" data-sort="name">↕️</span></th>
-                                    <th>Roll Number <span class="sort-icon" data-sort="roll">↕️</span></th>
-                                    <th>Mobile <span class="sort-icon" data-sort="mobile">↕️</span></th>
-                                    <th>Status</th>
+                                    <th>Name</th>
+                                    <th>Father</th>
+                                    <th>Roll Number</th>
+                                    <th>Class</th>
+                                    <th>Section</th>
+                                    <th>IID</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="students-table">
-                                <tr><td colspan="8" style="text-align: center;">Loading students data...</td></tr>
+                                <tr><td colspan="7" style="text-align: center;">Loading students data...</td></tr>
                             </tbody>
                         </table>
                     </div>
                     
-                    <div class="pagination" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                    <div class="pagination">
                         <div>
                             <button id="prev-page" class="btn" style="background-color: #4b5563;">&laquo; Previous</button>
                             <span id="page-info" style="margin: 0 1rem;">Page 1 of 1</span>
@@ -454,821 +371,194 @@
                     </div>
                 </div>
                 
-                <!-- Settings Panel -->
-                <div id="settings-panel" class="tab-panel">
+                <!-- Add Student Panel -->
+                <div id="add-student-panel" class="tab-panel">
                     <div class="section-header">
-                        <h2>System Settings</h2>
+                        <h2>Add New Student</h2>
                     </div>
                     
-                    <div>
-                        <h3>Account Settings</h3>
-                        <div class="form-group">
-                            <label for="current-username">Username</label>
-                            <input type="text" id="current-username" disabled>
+                    <form id="add-student-form">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label for="student-iid">IID (Student ID)*</label>
+                                <input type="text" id="student-iid" required placeholder="Enter Student ID">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="student-roll">Roll Number*</label>
+                                <input type="text" id="student-roll" required placeholder="Enter Roll Number">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="student-name">Full Name*</label>
+                                <input type="text" id="student-name" required placeholder="Enter Full Name">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="student-father">Father*</label>
+                                <input type="text" id="student-father" required placeholder="Enter Father's Name">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="student-class">Class*</label>
+                                <input type="text" id="student-class" required placeholder="Enter Class">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="student-section">Section*</label>
+                                <select id="student-section" required>
+                                    <option value="">Select Section</option>
+                                    <option value="A">Shapla</option>
+                                    <option value="B">Golap</option>
+                                    <option value="C">Morning</option>
+                                    
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="new-password">New Password</label>
-                            <input type="password" id="new-password" placeholder="Enter new password">
+                        
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <p id="add-student-error" class="error-message"></p>
+                            <button type="submit" class="btn" style="width: 200px;">Save Student</button>
                         </div>
-                        <div class="form-group">
-                            <label for="confirm-password">Confirm Password</label>
-                            <input type="password" id="confirm-password" placeholder="Confirm new password">
-                        </div>
-                        <button id="update-password-btn" class="btn">Update Password</button>
-                        <p id="settings-message" style="margin-top: 1rem;"></p>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Add Student Modal -->
-    <div id="add-student-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add New Student</h3>
-                <button class="close-btn" data-modal="add-student-modal">&times;</button>
-            </div>
-            <div class="form-group">
-                <label for="student-name">Name</label>
-                <input type="text" id="student-name" placeholder="Student name">
-            </div>
-            <div class="form-group">
-                <label for="student-roll">Roll Number</label>
-                <input type="text" id="student-roll" placeholder="Roll number">
-            </div>
-            <div class="form-group">
-                <label for="student-mobile">Mobile Number</label>
-                <input type="tel" id="student-mobile" placeholder="Mobile number">
-            </div>
-            <p id="add-student-error" class="error-message"></p>
-            <button id="save-student-btn" class="btn">Save Student</button>
-        </div>
-    </div>
-    
-    <!-- Add Admin Modal -->
-    <div id="add-admin-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add New Admin</h3>
-                <button class="close-btn" data-modal="add-admin-modal">&times;</button>
-            </div>
-            <div class="form-group">
-                <label for="admin-username">Username</label>
-                <input type="text" id="admin-username-input" placeholder="Admin username">
-            </div>
-            <div class="form-group">
-                <label for="admin-email">Email</label>
-                <input type="email" id="admin-email" placeholder="Admin email">
-            </div>
-            <div class="form-group">
-                <label for="admin-password">Password</label>
-                <input type="password" id="admin-password-input" placeholder="Password">
-            </div>
-            <div class="form-group">
-                <label for="admin-role">Role</label>
-                <select id="admin-role">
-                    <option value="admin">Admin</option>
-                    <option value="super_admin">Super Admin</option>
-                </select>
-            </div>
-            <p id="add-admin-error" class="error-message"></p>
-            <button id="save-admin-btn" class="btn">Save Admin</button>
-        </div>
-    </div>
-
-    <!-- Add Student Form -->
-    <div id="add-student-form" class="form-popup">
-        <div class="form-container">
-            <div class="form-header">
-                <h2>Add New Student</h2>
-                <span class="close-btn">&times;</span>
-            </div>
-            
-            <form id="student-form">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="student-name">Full Name <span class="required">*</span></label>
-                        <input type="text" id="student-name" required placeholder="Enter full name">
-                        <small class="error-text"></small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="student-roll">Roll Number <span class="required">*</span></label>
-                        <input type="text" id="student-roll" required placeholder="Enter roll number">
-                        <small class="error-text"></small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="student-email">Email <span class="required">*</span></label>
-                        <input type="email" id="student-email" required placeholder="Enter email address">
-                        <small class="error-text"></small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="student-mobile">Mobile <span class="required">*</span></label>
-                        <input type="tel" id="student-mobile" required placeholder="Enter mobile number">
-                        <small class="error-text"></small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="student-gender">Gender</label>
-                        <select id="student-gender">
-                            <option value="">Select Gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="student-dob">Date of Birth</label>
-                        <input type="date" id="student-dob">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="student-address">Address</label>
-                        <textarea id="student-address" placeholder="Enter full address" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="student-parent">Parent/Guardian Name</label>
-                        <input type="text" id="student-parent" placeholder="Enter parent/guardian name">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="student-parent-mobile">Parent/Guardian Mobile</label>
-                        <input type="tel" id="student-parent-mobile" placeholder="Enter parent/guardian mobile">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="student-section">Section/Class</label>
-                        <select id="student-section">
-                            <option value="">Select Section</option>
-                            <option value="A">Section A</option>
-                            <option value="B">Section B</option>
-                            <option value="C">Section C</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="student-status">Status</label>
-                        <select id="student-status">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label for="student-photo">Photo</label>
-                        <input type="file" id="student-photo" accept="image/*">
-                        <div id="photo-preview" style="margin-top: 10px; display: none;">
-                            <img id="preview-img" style="max-width: 100px; max-height: 100px;">
-                            <button type="button" id="remove-photo" class="btn-small">Remove</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-footer">
-                    <button type="button" class="btn cancel-btn">Cancel</button>
-                    <button type="submit" class="btn submit-btn">Add Student</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <style>
-    /* Add these styles to improve the form appearance */
-    .form-popup {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        overflow-y: auto;
-    }
-
-    .form-container {
-        background-color: white;
-        max-width: 800px;
-        margin: 50px auto;
-        border-radius: 8px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-        animation: slideIn 0.3s ease-in-out;
-    }
-
-    @keyframes slideIn {
-        from { transform: translateY(-30px); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-    }
-
-    .form-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 20px;
-        border-bottom: 1px solid #eee;
-    }
-
-    .form-header h2 {
-        margin: 0;
-        color: #333;
-    }
-
-    .close-btn {
-        font-size: 24px;
-        cursor: pointer;
-        color: #777;
-    }
-
-    .close-btn:hover {
-        color: #f44336;
-    }
-
-    #student-form {
-        padding: 20px;
-    }
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-    }
-
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: 500;
-    }
-
-    .form-group input, 
-    .form-group select, 
-    .form-group textarea {
-        width: 100%;
-        padding: 8px 12px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-    }
-
-    .form-group input:focus, 
-    .form-group select:focus, 
-    .form-group textarea:focus {
-        border-color: #4f46e5;
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
-    }
-
-    .required {
-        color: #e53e3e;
-    }
-
-    .error-text {
-        color: #e53e3e;
-        font-size: 12px;
-        display: none;
-    }
-
-    .form-footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        padding-top: 15px;
-        border-top: 1px solid #eee;
-    }
-
-    .btn-small {
-        padding: 3px 8px;
-        font-size: 12px;
-        background-color: #f44336;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    /* Improve existing buttons */
-    .btn {
-        padding: 8px 16px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: background-color 0.2s;
-    }
-
-    .submit-btn {
-        background-color: #4f46e5;
-        color: white;
-    }
-
-    .submit-btn:hover {
-        background-color: #4338ca;
-    }
-
-    .cancel-btn {
-        background-color: #e5e7eb;
-        color: #374151;
-    }
-
-    .cancel-btn:hover {
-        background-color: #d1d5db;
-    }
-    </style>
 
     <script>
-    // Add this JavaScript for the Student functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        // Form Validation Functions
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
-        }
-        
-        function validateMobile(mobile) {
-            const re = /^[0-9]{10,15}$/;
-            return re.test(mobile.replace(/[\s-]/g, ''));
-        }
-        
-        // Show Error Message
-        function showError(inputElement, message) {
-            const errorElement = inputElement.nextElementSibling;
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
-            inputElement.classList.add('error-input');
-        }
-        
-        // Clear Error Message
-        function clearError(inputElement) {
-            const errorElement = inputElement.nextElementSibling;
-            errorElement.textContent = '';
-            errorElement.style.display = 'none';
-            inputElement.classList.remove('error-input');
-        }
-        
-        // Add Student Form Validation
-        const studentForm = document.getElementById('student-form');
-        if (studentForm) {
-            studentForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                let isValid = true;
-                
-                // Validate Name
-                const nameInput = document.getElementById('student-name');
-                if (!nameInput.value.trim()) {
-                    showError(nameInput, 'Name is required');
-                    isValid = false;
-                } else if (nameInput.value.trim().length < 3) {
-                    showError(nameInput, 'Name must be at least 3 characters');
-                    isValid = false;
-                } else {
-                    clearError(nameInput);
-                }
-                
-                // Validate Roll Number
-                const rollInput = document.getElementById('student-roll');
-                if (!rollInput.value.trim()) {
-                    showError(rollInput, 'Roll number is required');
-                    isValid = false;
-                } else {
-                    clearError(rollInput);
-                }
-                
-                // Validate Email
-                const emailInput = document.getElementById('student-email');
-                if (!emailInput.value.trim()) {
-                    showError(emailInput, 'Email is required');
-                    isValid = false;
-                } else if (!validateEmail(emailInput.value.trim())) {
-                    showError(emailInput, 'Please enter a valid email');
-                    isValid = false;
-                } else {
-                    clearError(emailInput);
-                }
-                
-                // Validate Mobile
-                const mobileInput = document.getElementById('student-mobile');
-                if (!mobileInput.value.trim()) {
-                    showError(mobileInput, 'Mobile number is required');
-                    isValid = false;
-                } else if (!validateMobile(mobileInput.value.trim())) {
-                    showError(mobileInput, 'Please enter a valid mobile number');
-                    isValid = false;
-                } else {
-                    clearError(mobileInput);
-                }
-                
-                // If valid, process the form
-                if (isValid) {
-                    // In a real app, you would submit the form data to a server
-                    // For now, let's simulate a successful submission
-                    alert('Student added successfully!');
-                    closeStudentForm();
-                    loadStudentsData(); // Refresh the students table
-                }
-            });
-        }
-        
-        // Photo Preview Functionality
-        const photoInput = document.getElementById('student-photo');
-        const photoPreview = document.getElementById('photo-preview');
-        const previewImg = document.getElementById('preview-img');
-        const removePhotoBtn = document.getElementById('remove-photo');
-        
-        if (photoInput) {
-            photoInput.addEventListener('change', function() {
-                if (this.files && this.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        previewImg.src = e.target.result;
-                        photoPreview.style.display = 'block';
-                    }
-                    reader.readAsDataURL(this.files[0]);
-                }
-            });
-        }
-        
-        if (removePhotoBtn) {
-            removePhotoBtn.addEventListener('click', function() {
-                photoInput.value = '';
-                photoPreview.style.display = 'none';
-            });
-        }
-        
-        // Open Student Form Function
-        function openStudentForm() {
-            const formPopup = document.getElementById('add-student-form');
-            formPopup.style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
-        }
-        
-        // Close Student Form Function
-        function closeStudentForm() {
-            const formPopup = document.getElementById('add-student-form');
-            formPopup.style.display = 'none';
-            document.body.style.overflow = 'auto'; // Restore scrolling
-            
-            // Reset form
-            if (studentForm) {
-                studentForm.reset();
-                photoPreview.style.display = 'none';
-                
-                // Clear all error messages
-                const errorTexts = studentForm.querySelectorAll('.error-text');
-                errorTexts.forEach(errorText => {
-                    errorText.textContent = '';
-                    errorText.style.display = 'none';
-                });
-                
-                const inputFields = studentForm.querySelectorAll('input, select, textarea');
-                inputFields.forEach(field => {
-                    field.classList.remove('error-input');
-                });
-            }
-        }
-        
-        // Attach event listeners for opening/closing the form
-        const addStudentBtn = document.getElementById('add-student-btn-alt');
-        if (addStudentBtn) {
-            addStudentBtn.addEventListener('click', openStudentForm);
-        }
-        
-        const closeFormBtn = document.querySelector('.close-btn');
-        if (closeFormBtn) {
-            closeFormBtn.addEventListener('click', closeStudentForm);
-        }
-        
-        const cancelBtn = document.querySelector('.cancel-btn');
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', closeStudentForm);
-        }
-        
-        // Load Students Data (Simulation)
-        function loadStudentsData() {
-            const studentsTable = document.getElementById('students-table');
-            if (!studentsTable) return;
-            
-            // This is a simulation - in a real app, you would fetch data from a server
-            const mockData = [
-                { id: 1, name: 'John Smith', roll: 'S001', mobile: '1234567890', email: 'john@example.com', gender: 'Male', status: 'Active' },
-                { id: 2, name: 'Maria Garcia', roll: 'S002', mobile: '2345678901', email: 'maria@example.com', gender: 'Female', status: 'Active' },
-                { id: 3, name: 'Ahmed Khan', roll: 'S003', mobile: '3456789012', email: 'ahmed@example.com', gender: 'Male', status: 'Inactive' },
-                { id: 4, name: 'Zhang Wei', roll: 'S004', mobile: '4567890123', email: 'zhang@example.com', gender: 'Male', status: 'Active' },
-                { id: 5, name: 'Sara Johnson', roll: 'S005', mobile: '5678901234', email: 'sara@example.com', gender: 'Female', status: 'Active' },
-            ];
-            
-            let tableContent = '';
-            
-            if (mockData.length === 0) {
-                tableContent = '<tr><td colspan="8" style="text-align: center;">No students found</td></tr>';
-            } else {
-                mockData.forEach(student => {
-                    tableContent += `
-                    <tr>
-                        <td><input type="checkbox" data-id="${student.id}" class="student-checkbox"></td>
-                        <td>${student.name}</td>
-                        <td>${student.roll}</td>
-                        <td>${student.mobile}</td>
-                        <td>${student.email}</td>
-                        <td>${student.gender}</td>
-                        <td><span class="status-badge ${student.status.toLowerCase()}">${student.status}</span></td>
-                        <td>
-                            <button class="action-btn view-btn" data-id="${student.id}" title="View Details">👁️</button>
-                            <button class="action-btn edit-btn" data-id="${student.id}" title="Edit">✏️</button>
-                            <button class="action-btn delete-btn" data-id="${student.id}" title="Delete">🗑️</button>
-                        </td>
-                    </tr>
-                    `;
-                });
-            }
-            
-            studentsTable.innerHTML = tableContent;
-            
-            // Update page info
-            const pageInfo = document.getElementById('page-info');
-            if (pageInfo) {
-                pageInfo.textContent = `Page 1 of 1 (${mockData.length} records)`;
-            }
-            
-            // Setup Select All functionality
-            const selectAllCheckbox = document.getElementById('select-all-students');
-            const studentCheckboxes = document.querySelectorAll('.student-checkbox');
-            
-            if (selectAllCheckbox) {
-                selectAllCheckbox.addEventListener('change', function() {
-                    studentCheckboxes.forEach(checkbox => {
-                        checkbox.checked = this.checked;
-                    });
-                });
-            }
-            
-            // Setup Action Buttons
-            const viewButtons = document.querySelectorAll('.view-btn');
-            const editButtons = document.querySelectorAll('.edit-btn');
-            const deleteButtons = document.querySelectorAll('.delete-btn');
-            
-            viewButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const studentId = this.getAttribute('data-id');
-                    alert(`View student details for ID: ${studentId}`);
-                    // In a real app, you would show a modal with student details
-                });
-            });
-            
-            editButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const studentId = this.getAttribute('data-id');
-                    alert(`Edit student with ID: ${studentId}`);
-                    // In a real app, you would open the form with student data pre-filled
-                });
-            });
-            
-            deleteButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const studentId = this.getAttribute('data-id');
-                    if (confirm(`Are you sure you want to delete student with ID: ${studentId}?`)) {
-                        alert(`Student with ID: ${studentId} deleted successfully`);
-                        // In a real app, you would delete the student from the database
-                        loadStudentsData(); // Refresh the table
-                    }
-                });
-            });
-        }
-        
-        // Initialize student data
-        loadStudentsData();
-        
-        // Setup Search Functionality
-        const searchInput = document.getElementById('student-search');
-        const searchBtn = document.getElementById('search-btn');
-        
-        if (searchBtn) {
-            searchBtn.addEventListener('click', function() {
-                // In a real app, you would filter results based on search query
-                alert(`Searching for: ${searchInput.value}`);
-            });
-        }
-        
-        if (searchInput) {
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    searchBtn.click();
-                }
-            });
-        }
-        
-        // Setup Filter Functionality
-        const filterSelect = document.getElementById('student-filter');
-        if (filterSelect) {
-            filterSelect.addEventListener('change', function() {
-                // In a real app, you would filter results based on selected option
-                alert(`Filtering by: ${this.value || 'All Students'}`);
-            });
-        }
-        
-        // Setup Export and Print Functionality
-        const exportBtn = document.getElementById('export-csv-btn');
-        const printBtn = document.getElementById('print-students-btn');
-        
-        if (exportBtn) {
-            exportBtn.addEventListener('click', function() {
-                alert('Exporting student data to CSV...');
-                // In a real app, you would generate and download a CSV file
-            });
-        }
-        
-        if (printBtn) {
-            printBtn.addEventListener('click', function() {
-                alert('Preparing student list for printing...');
-                // In a real app, you would open a print dialog with formatted content
-            });
-        }
-        
-        // Setup Pagination
-        const prevPageBtn = document.getElementById('prev-page');
-        const nextPageBtn = document.getElementById('next-page');
-        const pageSizeSelect = document.getElementById('page-size');
-        
-        if (prevPageBtn) {
-            prevPageBtn.addEventListener('click', function() {
-                alert('Loading previous page...');
-                // In a real app, you would load the previous page of data
-            });
-        }
-        
-        if (nextPageBtn) {
-            nextPageBtn.addEventListener('click', function() {
-                alert('Loading next page...');
-                // In a real app, you would load the next page of data
-            });
-        }
-        
-        if (pageSizeSelect) {
-            pageSizeSelect.addEventListener('change', function() {
-                alert(`Changing page size to ${this.value} records per page...`);
-                // In a real app, you would update the number of records shown per page
-            });
-        }
-        
-        // Setup Sort Functionality
-        const sortIcons = document.querySelectorAll('.sort-icon');
-        sortIcons.forEach(icon => {
-            icon.addEventListener('click', function() {
-                const column = this.getAttribute('data-sort');
-                alert(`Sorting by ${column}...`);
-                // In a real app, you would sort the data based on the selected column
-            });
-        });
-    });
-    </script>
-
-    <script>
-        // Initialize Supabase client
+        // Initialize Supabase client correctly
         const supabaseUrl = 'https://rtfefxghfbtirfnlbucb.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0ZmVmeGdoZmJ0aXJmbmxidWNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1MDg3OTcsImV4cCI6MjA1NjA4NDc5N30.fb7_myCmFzbV7WPNjFN_NEl4z0sOmRCefnkQbk6c10w';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        let supabase;
+
+        // Variables for pagination
+        let currentPage = 1;
+        let totalPages = 1;
+        let pageSize = 10;
+        let allStudents = []; // Store all students for client-side pagination
+
+        // Directly initialize Supabase client
+        try {
+            supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+            console.log("Supabase client initialized successfully");
+        } catch (error) {
+            console.error("Failed to initialize Supabase client:", error);
+            // Will use sample data as fallback if needed
+        }
+
+        // Wait for document and external scripts to load completely
+        document.addEventListener('DOMContentLoaded', function() {
+            // If supabase is not initialized yet, try again
+            if (!supabase) {
+                try {
+                    supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                    console.log("Supabase client initialized on second attempt");
+                } catch (error) {
+                    console.error("Failed to initialize Supabase client on second attempt:", error);
+                    // Will use sample data
+                }
+            }
+            
+            // Either proceed with real data or use sample data
+            if (supabase) {
+                loadAdminData();
+            } else {
+                useSampleData();
+                document.getElementById('total-students').textContent = "5 (OFFLINE)";
+                updateStudentCount(5);
+                
+                // Show fallback message
+                const messageElement = document.createElement('div');
+                messageElement.style.backgroundColor = '#fff3cd';
+                messageElement.style.color = '#856404';
+                messageElement.style.padding = '10px';
+                messageElement.style.marginBottom = '1rem';
+                messageElement.style.borderRadius = '4px';
+                messageElement.style.textAlign = 'center';
+                messageElement.innerHTML = '<strong>Database connection failed.</strong> Working in offline mode with sample data.';
+                
+                document.querySelector('.main-content').prepend(messageElement);
+            }
+        });
         
         // Get admin ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const adminId = urlParams.get('id');
         
-        // Variables to store admin data
-        let currentAdmin = null;
-        
         // DOM Elements
         const adminUsernameElement = document.getElementById('admin-username');
         const logoutButton = document.getElementById('logout-btn');
         const totalStudentsElement = document.getElementById('total-students');
-        const totalAdminsElement = document.getElementById('total-admins');
         const lastLoginElement = document.getElementById('last-login');
         const recentStudentsTable = document.getElementById('recent-students-table');
         const studentsTable = document.getElementById('students-table');
-        const currentUsernameInput = document.getElementById('current-username');
         
-        // Tab Navigation and Menu Handling
+        // Tab Navigation
         document.querySelectorAll('.sidebar-menu a').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 
-                // If it's a submenu toggle
-                if (link.classList.contains('has-submenu')) {
-                    const parentLi = link.parentElement;
-                    const submenu = parentLi.querySelector('.submenu');
-                    
-                    // Toggle active class for submenu
-                    link.classList.toggle('active');
-                    
-                    // Toggle submenu visibility
-                    if (submenu) {
-                        submenu.classList.toggle('active');
-                    }
-                    
-                    return; // Don't activate the tab yet
-                }
-                
-                // If it's a regular menu item or submenu item
+                // Get tab ID
                 const tabId = link.getAttribute('data-tab');
-                if (tabId) {
-                    // Remove active class from all links and panels
-                    document.querySelectorAll('.sidebar-menu > li > a').forEach(l => {
-                        if (!l.classList.contains('has-submenu')) {
-                            l.classList.remove('active');
-                        }
-                    });
-                    document.querySelectorAll('.submenu a').forEach(l => l.classList.remove('active'));
-                    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-                    
-                    // Add active class to clicked link and corresponding panel
-                    link.classList.add('active');
-                    
-                    // Try to find the panel
-                    const panel = document.getElementById(`${tabId}-panel`);
-                    if (panel) {
-                        panel.classList.add('active');
-                    }
-                    
-                    // If it's a submenu item, keep the parent menu active
-                    if (link.closest('.submenu')) {
-                        const parentMenu = link.closest('.submenu').previousElementSibling;
-                        if (parentMenu) {
-                            parentMenu.classList.add('active');
-                        }
-                    }
+                
+                // Remove active class from all links and panels
+                document.querySelectorAll('.sidebar-menu a').forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+                
+                // Add active class to clicked link and corresponding panel
+                link.classList.add('active');
+                
+                // Show the selected panel
+                const panel = document.getElementById(`${tabId}-panel`);
+                if (panel) {
+                    panel.classList.add('active');
                 }
             });
         });
         
         // Button to view all students
         document.getElementById('view-all-students').addEventListener('click', () => {
-            // Activate the students tab
+            // Activate the students list tab
             document.querySelectorAll('.sidebar-menu a').forEach(l => l.classList.remove('active'));
             document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
             
-            const studentsLink = document.querySelector('.sidebar-menu a[data-tab="students"]');
-            const allStudentsLink = document.querySelector('.submenu a[data-tab="all-students"]');
-            
-            if (studentsLink) {
-                studentsLink.classList.add('active');
-                const submenu = studentsLink.parentElement.querySelector('.submenu');
-                if (submenu) {
-                    submenu.classList.add('active');
-                }
+            const studentsListLink = document.querySelector('.sidebar-menu a[data-tab="students-list"]');
+            if (studentsListLink) {
+                studentsListLink.classList.add('active');
             }
             
-            if (allStudentsLink) {
-                allStudentsLink.classList.add('active');
-            }
-            
-            document.getElementById('students-panel').classList.add('active');
+            document.getElementById('students-list-panel').classList.add('active');
         });
         
-        // Update Menu Badges
-        function updateMenuBadges(studentCount) {
+        // Add New Student button on Students List
+        document.getElementById('add-new-student-btn').addEventListener('click', () => {
+            // Activate the add student tab
+            document.querySelectorAll('.sidebar-menu a').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+            
+            const addStudentLink = document.querySelector('.sidebar-menu a[data-tab="add-student"]');
+            if (addStudentLink) {
+                addStudentLink.classList.add('active');
+            }
+            
+            document.getElementById('add-student-panel').classList.add('active');
+        });
+        
+        // Update Badge Count
+        function updateStudentCount(count) {
             const studentsCountBadge = document.getElementById('students-count');
             
             if (studentsCountBadge) {
-                studentsCountBadge.textContent = studentCount || 0;
+                studentsCountBadge.textContent = count || 0;
+            }
+            
+            if (totalStudentsElement) {
+                totalStudentsElement.textContent = count || 0;
             }
         }
         
-        // Modal Controls
-        document.querySelectorAll('.close-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.getElementById(btn.getAttribute('data-modal')).classList.remove('active');
-            });
-        });
-        
-        document.getElementById('add-student-btn').addEventListener('click', () => {
-            // Clear form
-            document.getElementById('student-name').value = '';
-            document.getElementById('student-roll').value = '';
-            document.getElementById('student-mobile').value = '';
-            document.getElementById('add-student-error').textContent = '';
-            
-            // Show modal
-            document.getElementById('add-student-modal').classList.add('active');
-        });
-        
-        document.getElementById('add-admin-btn').addEventListener('click', () => {
-            // Clear form
-            document.getElementById('admin-username-input').value = '';
-            document.getElementById('admin-email').value = '';
-            document.getElementById('admin-password-input').value = '';
-            document.getElementById('admin-role').value = 'admin';
-            document.getElementById('add-admin-error').textContent = '';
-            
-            // Show modal
-            document.getElementById('add-admin-modal').classList.add('active');
-        });
-        
-        // Load Admin Data
+        // Load admin data
         async function loadAdminData() {
             if (!adminId) {
                 console.error('Admin ID is missing in URL');
@@ -1278,9 +568,7 @@
             }
             
             try {
-                console.log('Fetching admin with ID:', adminId);
-                
-                // Get all admins first to handle any ID type mismatches
+                // Get admin data
                 const { data: allAdmins, error: listError } = await supabase
                     .from('admin')
                     .select('*');
@@ -1289,26 +577,15 @@
                     throw new Error('Error fetching admins: ' + listError.message);
                 }
                 
-                if (!allAdmins || allAdmins.length === 0) {
-                    throw new Error('No admins found in the database');
-                }
-                
-                console.log('Available admin IDs:', allAdmins.map(a => `${a.id} (${typeof a.id})`));
-                
-                // Find the admin by matching ID in string format to avoid type issues
+                // Find the admin by ID
                 const admin = allAdmins.find(a => String(a.id) === String(adminId));
                 
                 if (!admin) {
-                    console.error('Admin not found with ID:', adminId);
                     throw new Error('Admin not found. Please login again.');
                 }
                 
-                console.log('Admin data loaded successfully:', admin);
-                
-                // Store admin data and update UI
-                currentAdmin = admin;
+                // Update UI
                 adminUsernameElement.textContent = admin.username;
-                currentUsernameInput.value = admin.username;
                 
                 // Update last login
                 lastLoginElement.textContent = new Date().toLocaleString();
@@ -1332,18 +609,7 @@
                     .select('*', { count: 'exact', head: true });
                 
                 if (!studentsError) {
-                    totalStudentsElement.textContent = studentsCount || 0;
-                    // Update student count badge
-                    updateMenuBadges(studentsCount);
-                }
-                
-                // Count total admins
-                const { count: adminsCount, error: adminsError } = await supabase
-                    .from('admin')
-                    .select('*', { count: 'exact', head: true });
-                
-                if (!adminsError) {
-                    totalAdminsElement.textContent = adminsCount || 0;
+                    updateStudentCount(studentsCount);
                 }
                 
                 // Load recent students
@@ -1365,8 +631,11 @@
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${student.name || 'N/A'}</td>
+                            <td>${student.father || 'N/A'}</td>
                             <td>${student.roll || 'N/A'}</td>
-                            <td>${student.mobile || 'N/A'}</td>
+                            <td>${student.class || 'N/A'}</td>
+                            <td>${student.section || 'N/A'}</td>
+                            <td>${student.iid || 'N/A'}</td>
                             <td>
                                 <button class="action-btn edit-btn" data-id="${student.id}">Edit</button>
                                 <button class="action-btn delete-btn" data-id="${student.id}">Delete</button>
@@ -1375,37 +644,169 @@
                         recentStudentsTable.appendChild(row);
                     });
                 } else {
-                    recentStudentsTable.innerHTML = '<tr><td colspan="4" style="text-align: center;">No students found</td></tr>';
+                    recentStudentsTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">No students found</td></tr>';
                 }
                 
-                // Load students for the students tab
-                loadStudents();
+                // Load all students
+                loadAllStudents();
                 
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
             }
         }
         
-        // Load All Students
-        async function loadStudents() {
+        // Load All Students - with pagination support
+        async function loadAllStudents() {
             try {
+                // Show loading message
+                studentsTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">Loading students data...</td></tr>';
+                
+                // First check if the Supabase client is initialized properly
+                if (!supabase) {
+                    throw new Error('Supabase client is not initialized');
+                }
+                
+                console.log('Fetching students data...');
+                
+                // Add a small delay to ensure connection is established
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
                 const { data: students, error } = await supabase
                     .from('students')
                     .select('*')
                     .order('name');
                 
+                if (error) {
+                    console.error('Supabase error:', error);
+                    throw error;
+                }
+                
+                console.log('Students data received:', students ? students.length : 0, 'records');
+                
+                // Store all students for pagination
+                allStudents = students || [];
+                
+                // Calculate total pages
+                pageSize = parseInt(document.getElementById('page-size').value, 10);
+                totalPages = Math.ceil(allStudents.length / pageSize);
+                
+                // Display current page
+                displayStudentPage(currentPage);
+                
+                // Update student count
+                updateStudentCount(allStudents.length);
+                
+            } catch (error) {
+                console.error('Error loading students:', error);
+                studentsTable.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Error: ${error.message}</td></tr>`;
+                
+                // Try alternative approach if the first one fails
+                tryAlternativeLoadingMethod();
+            }
+        }
+
+        // Display a specific page of students
+        function displayStudentPage(page) {
+            // Ensure page is within bounds
+            if (page < 1) page = 1;
+            if (page > totalPages) page = totalPages;
+            
+            // Update current page
+            currentPage = page;
+            
+            // Calculate start and end indices
+            const startIndex = (page - 1) * pageSize;
+            const endIndex = Math.min(startIndex + pageSize, allStudents.length);
+            
+            // Get students for current page
+            const displayedStudents = allStudents.slice(startIndex, endIndex);
+            
+            // Clear table
+            studentsTable.innerHTML = '';
+            
+            if (displayedStudents.length === 0) {
+                studentsTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">No students found</td></tr>';
+                return;
+            }
+            
+            // Display students
+            displayedStudents.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.name || 'N/A'}</td>
+                    <td>${student.father || 'N/A'}</td>
+                    <td>${student.roll || 'N/A'}</td>
+                    <td>${student.class || 'N/A'}</td>
+                    <td>${student.section || 'N/A'}</td>
+                    <td>${student.iid || 'N/A'}</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="${student.id}">Edit</button>
+                        <button class="action-btn delete-btn" data-id="${student.id}">Delete</button>
+                    </td>
+                `;
+                studentsTable.appendChild(row);
+            });
+            
+            // Update pagination info
+            const pageInfo = document.getElementById('page-info');
+            if (pageInfo) {
+                pageInfo.textContent = `Page ${currentPage} of ${totalPages} (${allStudents.length} records)`;
+            }
+            
+            // Enable/disable pagination buttons
+            const prevPageBtn = document.getElementById('prev-page');
+            const nextPageBtn = document.getElementById('next-page');
+            
+            if (prevPageBtn) {
+                prevPageBtn.disabled = currentPage <= 1;
+                prevPageBtn.style.opacity = currentPage <= 1 ? '0.5' : '1';
+            }
+            
+            if (nextPageBtn) {
+                nextPageBtn.disabled = currentPage >= totalPages;
+                nextPageBtn.style.opacity = currentPage >= totalPages ? '0.5' : '1';
+            }
+            
+            // Setup action buttons
+            setupActionButtons();
+        }
+        
+        // Search functionality
+        document.getElementById('search-btn').addEventListener('click', async () => {
+            const searchQuery = document.getElementById('student-search').value.trim().toLowerCase();
+            
+            if (!searchQuery) {
+                loadAllStudents();
+                return;
+            }
+            
+            try {
+                const { data: students, error } = await supabase
+                    .from('students')
+                    .select('*');
+                
                 if (error) throw error;
                 
-                // Populate students table
-                if (students && students.length > 0) {
+                // Filter students based on search query
+                const filteredStudents = students.filter(student => 
+                    (student.name && student.name.toLowerCase().includes(searchQuery)) || 
+                    (student.roll && student.roll.toLowerCase().includes(searchQuery)) || 
+                    (student.iid && student.iid.toLowerCase().includes(searchQuery)) ||
+                    (student.father && student.father.toLowerCase().includes(searchQuery))
+                );
+                
+                // Update students table with filtered results
+                if (filteredStudents.length > 0) {
                     studentsTable.innerHTML = '';
                     
-                    students.forEach(student => {
+                    filteredStudents.forEach(student => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${student.name || 'N/A'}</td>
+                            <td>${student.father || 'N/A'}</td>
                             <td>${student.roll || 'N/A'}</td>
-                            <td>${student.mobile || 'N/A'}</td>
+                            <td>${student.class || 'N/A'}</td>
+                            <td>${student.section || 'N/A'}</td>
                             <td>${student.iid || 'N/A'}</td>
                             <td>
                                 <button class="action-btn edit-btn" data-id="${student.id}">Edit</button>
@@ -1415,419 +816,333 @@
                         studentsTable.appendChild(row);
                     });
                     
-                    // Update student count badge
-                    updateMenuBadges(students.length);
+                    // Update page info
+                    const pageInfo = document.getElementById('page-info');
+                    if (pageInfo) {
+                        pageInfo.textContent = `Found ${filteredStudents.length} matching records`;
+                    }
+                    
+                    // Setup action buttons
+                    setupActionButtons();
                 } else {
-                    studentsTable.innerHTML = '<tr><td colspan="5" style="text-align: center;">No students found</td></tr>';
-                    updateMenuBadges(0);
+                    studentsTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">No matching students found</td></tr>';
+                }
+                
+            } catch (error) {
+                console.error('Error searching students:', error);
+                studentsTable.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Error: ${error.message}</td></tr>`;
+            }
+        });
+        
+        // Handle pressing Enter in search box
+        document.getElementById('student-search').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('search-btn').click();
+            }
+        });
+        
+        // Setup action buttons
+        function setupActionButtons() {
+            // Edit buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const studentId = this.getAttribute('data-id');
+                    editStudent(studentId);
+                });
+            });
+            
+            // Delete buttons
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const studentId = this.getAttribute('data-id');
+                    if (confirm('Are you sure you want to delete this student?')) {
+                        deleteStudent(studentId);
+                    }
+                });
+            });
+        }
+        
+        // Edit student
+        async function editStudent(id) {
+            try {
+                const { data: student, error } = await supabase
+                    .from('students')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+                
+                if (error) throw error;
+                
+                if (student) {
+                    // Switch to add student tab
+                    document.querySelectorAll('.sidebar-menu a').forEach(l => l.classList.remove('active'));
+                    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+                    
+                    const addStudentLink = document.querySelector('.sidebar-menu a[data-tab="add-student"]');
+                    if (addStudentLink) {
+                        addStudentLink.classList.add('active');
+                    }
+                    
+                    const panel = document.getElementById('add-student-panel');
+                    if (panel) {
+                        panel.classList.add('active');
+                    }
+                    
+                    // Fill form with student data
+                    document.getElementById('student-iid').value = student.iid || '';
+                    document.getElementById('student-roll').value = student.roll || '';
+                    document.getElementById('student-name').value = student.name || '';
+                    document.getElementById('student-father').value = student.father || '';
+                    document.getElementById('student-class').value = student.class || '';
+                    document.getElementById('student-section').value = student.section || '';
+                    
+                    // Change form submit button to update
+                    const saveBtn = document.querySelector('#add-student-form button[type="submit"]');
+                    if (saveBtn) {
+                        saveBtn.textContent = 'Update Student';
+                        // Add data-id for the update operation
+                        saveBtn.setAttribute('data-id', id);
+                    }
                 }
             } catch (error) {
-                console.error('Error loading students:', error);
-                studentsTable.innerHTML = `<tr><td colspan="5" style="text-align: center; color: red;">Error: ${error.message}</td></tr>`;
+                console.error('Error fetching student data:', error);
+                alert('Error fetching student data: ' + error.message);
             }
         }
         
-        // Save New Student
-        document.getElementById('save-student-btn').addEventListener('click', async () => {
-            const name = document.getElementById('student-name').value;
+        // Delete student
+        async function deleteStudent(id) {
+            try {
+                const { error } = await supabase
+                    .from('students')
+                    .delete()
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                alert('Student deleted successfully');
+                
+                // Reload students data
+                loadDashboardData();
+                
+            } catch (error) {
+                console.error('Error deleting student:', error);
+                alert('Error deleting student: ' + error.message);
+            }
+        }
+        
+        // Handle form submission for adding/updating student
+        document.getElementById('add-student-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const iid = document.getElementById('student-iid').value;
             const roll = document.getElementById('student-roll').value;
-            const mobile = document.getElementById('student-mobile').value;
+            const name = document.getElementById('student-name').value;
+            const father = document.getElementById('student-father').value;
+            const classValue = document.getElementById('student-class').value;
+            const section = document.getElementById('student-section').value;
             const errorElement = document.getElementById('add-student-error');
             
-            if (!name || !roll || !mobile) {
-                errorElement.textContent = 'Please fill in all fields';
+            // Validate form
+            if (!iid || !roll || !name || !father || !classValue || !section) {
+                errorElement.textContent = 'Please fill in all required fields';
                 return;
             }
             
             try {
-                // Generate a unique ID for the student
-                const iid = Math.random().toString(36).substring(2, 15);
+                // Check if it's an update or add operation
+                const saveBtn = document.querySelector('#add-student-form button[type="submit"]');
+                const isUpdate = saveBtn.hasAttribute('data-id');
                 
-                // Insert new student
-                const { data, error } = await supabase
-                    .from('students')
-                    .insert([{
-                        name,
-                        roll,
-                        mobile,
-                        iid
-                    }]);
+                if (isUpdate) {
+                    // Update existing student
+                    const studentId = saveBtn.getAttribute('data-id');
+                    
+                    const { error } = await supabase
+                        .from('students')
+                        .update({
+                            iid,
+                            roll,
+                            name,
+                            father,
+                            class: classValue,
+                            section
+                        })
+                        .eq('id', studentId);
+                    
+                    if (error) throw error;
+                    
+                    alert('Student updated successfully');
+                    
+                    // Reset button
+                    saveBtn.textContent = 'Save Student';
+                    saveBtn.removeAttribute('data-id');
+                    
+                } else {
+                    // Add new student
+                    const { error } = await supabase
+                        .from('students')
+                        .insert([{
+                            iid,
+                            roll,
+                            name,
+                            father,
+                            class: classValue,
+                            section
+                        }]);
+                    
+                    if (error) throw error;
+                    
+                    alert('Student added successfully');
+                }
                 
-                if (error) throw error;
+                // Reset form
+                this.reset();
                 
-                // Close modal and reload data
-                document.getElementById('add-student-modal').classList.remove('active');
+                // Reload dashboard data
                 loadDashboardData();
                 
+                // Clear error message
+                errorElement.textContent = '';
+                
             } catch (error) {
-                console.error('Error adding student:', error);
-                errorElement.textContent = error.message || 'Failed to add student';
+                console.error('Error saving student:', error);
+                errorElement.textContent = error.message || 'Failed to save student';
             }
         });
         
-        // Save New Admin
-        document.getElementById('save-admin-btn').addEventListener('click', async () => {
-            const username = document.getElementById('admin-username-input').value;
-            const email = document.getElementById('admin-email').value;
-            const password = document.getElementById('admin-password-input').value;
-            const role = document.getElementById('admin-role').value;
-            const errorElement = document.getElementById('add-admin-error');
-            
-            if (!username || !password) {
-                errorElement.textContent = 'Username and password are required';
-                return;
-            }
-            
-            try {
-                // Insert new admin
-                const { data, error } = await supabase
-                    .from('admin')
-                    .insert([{
-                        username,
-                        email,
-                        password,
-                        role
-                    }]);
-                
-                if (error) throw error;
-                
-                // Close modal and reload data
-                document.getElementById('add-admin-modal').classList.remove('active');
-                loadDashboardData();
-                
-            } catch (error) {
-                console.error('Error adding admin:', error);
-                errorElement.textContent = error.message || 'Failed to add admin';
+        // Pagination controls
+        document.getElementById('prev-page').addEventListener('click', function() {
+            if (currentPage > 1) {
+                displayStudentPage(currentPage - 1);
             }
         });
         
-        // Update Password
-        document.getElementById('update-password-btn').addEventListener('click', async () => {
-            const newPassword = document.getElementById('new-password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            const settingsMessage = document.getElementById('settings-message');
-            
-            if (!newPassword) {
-                settingsMessage.textContent = 'Please enter a new password';
-                settingsMessage.style.color = 'red';
-                return;
-            }
-            
-            if (newPassword !== confirmPassword) {
-                settingsMessage.textContent = 'Passwords do not match';
-                settingsMessage.style.color = 'red';
-                return;
-            }
-            
-            try {
-                // Update admin password
-                const { data, error } = await supabase
-                    .from('admin')
-                    .update({ password: newPassword })
-                    .eq('id', adminId);
-                
-                if (error) throw error;
-                
-                // Show success message
-                settingsMessage.textContent = 'Password updated successfully';
-                settingsMessage.style.color = 'green';
-                
-                // Clear password fields
-                document.getElementById('new-password').value = '';
-                document.getElementById('confirm-password').value = '';
-                
-            } catch (error) {
-                console.error('Error updating password:', error);
-                settingsMessage.textContent = error.message || 'Failed to update password';
-                settingsMessage.style.color = 'red';
+        document.getElementById('next-page').addEventListener('click', function() {
+            if (currentPage < totalPages) {
+                displayStudentPage(currentPage + 1);
             }
         });
         
-        // Logout
-        logoutButton.addEventListener('click', async () => {
-            try {
-                // Clear any session data if needed
+        document.getElementById('page-size').addEventListener('change', function() {
+            pageSize = parseInt(this.value, 10);
+            totalPages = Math.ceil(allStudents.length / pageSize);
+            displayStudentPage(1);
+        });
+        
+        // Logout functionality
+        logoutButton.addEventListener('click', function() {
+            if (confirm('Are you sure you want to logout?')) {
                 window.location.href = './index.html';
-            } catch (error) {
-                console.error('Error logging out:', error);
-                alert('Failed to log out. Please try again.');
             }
         });
         
         // Initialize the dashboard
         document.addEventListener('DOMContentLoaded', loadAdminData);
-    </script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Toggle submenu functionality
-        const menuItemsWithSubmenu = document.querySelectorAll('.has-submenu');
-        menuItemsWithSubmenu.forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                this.classList.toggle('active');
-                const submenu = this.nextElementSibling;
-                submenu.classList.toggle('active');
-            });
-        });
 
-        // Tab switching functionality
-        const menuItems = document.querySelectorAll('.sidebar-menu a');
-        const tabPanels = document.querySelectorAll('.tab-panel');
-        
-        menuItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                const tabId = this.getAttribute('data-tab');
-                
-                // Skip if it's a parent menu with submenu and was clicked on the parent
-                if (this.classList.contains('has-submenu') && e.target === this) {
-                    return;
-                }
-                
-                // Remove active class from all menu items
-                menuItems.forEach(i => i.classList.remove('active'));
-                
-                // Add active class to clicked menu item
-                this.classList.add('active');
-                
-                // If this is a submenu item, also make its parent active
-                if (this.closest('.submenu')) {
-                    this.closest('.submenu').previousElementSibling.classList.add('active');
-                }
-                
-                // Hide all panels
-                tabPanels.forEach(panel => {
-                    panel.classList.remove('active');
-                });
-                
-                // Show the selected panel
-                const targetPanel = document.getElementById(tabId + '-panel');
-                if (targetPanel) {
-                    targetPanel.classList.add('active');
-                }
-            });
-        });
-
-        // Function to update badge counts
-        function updateMenuBadges() {
-            // You could fetch these values from your database
-            const studentsCount = document.querySelectorAll('#students-table tbody tr').length || 0;
+        // Alternative loading method for students
+        async function tryAlternativeLoadingMethod() {
+            console.log('Trying alternative loading method...');
             
-            document.getElementById('students-count').textContent = studentsCount;
-            
-            // Also update dashboard counts
-            document.getElementById('total-students').textContent = studentsCount;
+            try {
+                // Create a new Supabase client instance to ensure fresh connection
+                const altSupabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+                
+                // Try with a simplified query
+                const { data, error } = await altSupabase
+                    .from('students')
+                    .select('id, name, father, roll, class, section, iid')
+                    .limit(100);
+                
+                if (error) {
+                    throw error;
+                }
+                
+                if (data && data.length > 0) {
+                    console.log('Alternative method successful, received', data.length, 'records');
+                    
+                    // Update the table with the data
+                    studentsTable.innerHTML = '';
+                    
+                    data.forEach(student => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${student.name || 'N/A'}</td>
+                            <td>${student.father || 'N/A'}</td>
+                            <td>${student.roll || 'N/A'}</td>
+                            <td>${student.class || 'N/A'}</td>
+                            <td>${student.section || 'N/A'}</td>
+                            <td>${student.iid || 'N/A'}</td>
+                            <td>
+                                <button class="action-btn edit-btn" data-id="${student.id}">Edit</button>
+                                <button class="action-btn delete-btn" data-id="${student.id}">Delete</button>
+                            </td>
+                        `;
+                        studentsTable.appendChild(row);
+                    });
+                    
+                    // Update page info
+                    const pageInfo = document.getElementById('page-info');
+                    if (pageInfo) {
+                        pageInfo.textContent = `Page 1 of 1 (${data.length} records)`;
+                    }
+                    
+                    // Update student count
+                    updateStudentCount(data.length);
+                    
+                    // Setup action buttons
+                    setupActionButtons();
+                } else {
+                    // If still no data, try direct sample data approach as last resort
+                    useSampleData();
+                }
+            } catch (error) {
+                console.error('Alternative loading method failed:', error);
+                useSampleData();
+            }
         }
 
-        // Update counts when page loads
-        updateMenuBadges();
-
-        // Logout functionality
-        document.getElementById('logout-btn').addEventListener('click', function() {
-            if (confirm('Are you sure you want to logout?')) {
-                // Clear any session data
-                localStorage.removeItem('admin_session');
-                // Redirect to login page
-                window.location.href = 'index.html';
-            }
-        });
-
-        // Get admin username from session if available
-        const adminData = JSON.parse(localStorage.getItem('admin_session') || '{}');
-        if (adminData.username) {
-            document.getElementById('admin-username').textContent = adminData.username;
-        }
-    });
-
-    // Function to handle adding new items (students, admins)
-    function addNewItem(type) {
-        const form = document.getElementById(`add-${type}-form`);
-        const tableBody = document.querySelector(`#${type}-table tbody`);
-        
-        if (!form || !tableBody) return;
-        
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
+        // Last resort - use sample data
+        function useSampleData() {
+            console.log('Using sample data as fallback');
             
-            // Get form data
-            const formData = new FormData(form);
-            const data = {};
-            for (const [key, value] of formData.entries()) {
-                data[key] = value;
-            }
+          
             
-            // Generate a unique ID
-            data.id = Date.now().toString();
+            // Update the table with sample data
+            studentsTable.innerHTML = '';
             
-            // Create new row
-            const newRow = document.createElement('tr');
-            newRow.dataset.id = data.id;
-            
-            // Create row HTML based on the type
-            if (type === 'student') {
-                newRow.innerHTML = `
-                    <td>${data.id}</td>
-                    <td>${data.name}</td>
-                    <td>${data.email}</td>
-                    <td>${data.phone || ''}</td>
-                    <td>${data.course || ''}</td>
+            sampleData.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.name || 'N/A'}</td>
+                    <td>${student.father || 'N/A'}</td>
+                    <td>${student.roll || 'N/A'}</td>
+                    <td>${student.class || 'N/A'}</td>
+                    <td>${student.section || 'N/A'}</td>
+                    <td>${student.iid || 'N/A'}</td>
                     <td>
-                        <button class="action-btn edit-btn" onclick="editItem('${type}', '${data.id}')">Edit</button>
-                        <button class="action-btn delete-btn" onclick="deleteItem('${type}', '${data.id}')">Delete</button>
+                        <button class="action-btn edit-btn" data-id="${student.id}">Edit</button>
+                        <button class="action-btn delete-btn" data-id="${student.id}">Delete</button>
                     </td>
                 `;
-            }
-            
-            // Add row to table
-            tableBody.appendChild(newRow);
-            
-            // Reset form
-            form.reset();
-            
-            // Update counts
-            updateMenuBadges();
-            
-            // Show success message
-            alert(`${type.charAt(0).toUpperCase() + type.slice(1)} added successfully!`);
-        });
-    }
-
-    // Function to edit an item
-    function editItem(type, id) {
-        const row = document.querySelector(`#${type}s-table tr[data-id="${id}"]`);
-        if (!row) return;
-        
-        // Get item data from the row
-        const cells = row.cells;
-        const data = {
-            id: id,
-            name: cells[1].textContent,
-            email: cells[2].textContent
-        };
-        
-        if (type === 'student') {
-            data.phone = cells[3].textContent;
-            data.course = cells[4].textContent;
-        }
-        
-        // Open edit modal with data
-        const modal = document.getElementById(`edit-${type}-modal`);
-        if (modal) {
-            // Populate form fields
-            const form = modal.querySelector('form');
-            for (const [key, value] of Object.entries(data)) {
-                const input = form.querySelector(`[name="${key}"]`);
-                if (input) input.value = value;
-            }
-            
-            // Show modal
-            modal.classList.add('active');
-        }
-    }
-
-    // Function to delete an item
-    function deleteItem(type, id) {
-        if (confirm(`Are you sure you want to delete this ${type}?`)) {
-            const row = document.querySelector(`#${type}s-table tr[data-id="${id}"]`);
-            if (row) {
-                row.remove();
-                // Update counts
-                updateMenuBadges();
-                alert(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully!`);
-            }
-        }
-    }
-
-    // Initialize the add functionality for students and admins
-    document.addEventListener('DOMContentLoaded', function() {
-        addNewItem('student');
-        
-        // Close modal functionality
-        document.querySelectorAll('.close-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                this.closest('.modal').classList.remove('active');
+                studentsTable.appendChild(row);
             });
-        });
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Handle menu toggling for submenus
-        const submenuToggleLinks = document.querySelectorAll('.has-submenu');
-        submenuToggleLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Toggle active class on the clicked menu
-                this.classList.toggle('active');
-                
-                // Toggle the submenu
-                const submenu = this.nextElementSibling;
-                submenu.classList.toggle('active');
-            });
-        });
-
-        // Handle tab switching
-        const tabLinks = document.querySelectorAll('.sidebar-menu a');
-        const tabPanels = document.querySelectorAll('.tab-panel');
-        
-        tabLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                const tabId = this.getAttribute('data-tab');
-                
-                // Skip if this is a submenu toggle link
-                if (this.classList.contains('has-submenu')) {
-                    return;
-                }
-                
-                e.preventDefault();
-                
-                // Remove active class from all links and add to clicked link
-                tabLinks.forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-                
-                // If this is a submenu item, also activate its parent
-                if (this.closest('.submenu')) {
-                    const parentLink = this.closest('.submenu').previousElementSibling;
-                    parentLink.classList.add('active');
-                }
-                
-                // Hide all panels and show the selected one
-                tabPanels.forEach(panel => {
-                    panel.classList.remove('active');
-                });
-                
-                const targetPanel = document.getElementById(tabId + '-panel');
-                if (targetPanel) {
-                    targetPanel.classList.add('active');
-                }
-            });
-        });
-
-        // Fetch and update badge counts
-        fetchCounts();
-        
-        // Logout functionality
-        document.getElementById('logout-btn').addEventListener('click', function() {
-            // Implement logout functionality
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('admin_token');
-                window.location.href = 'index.html';
-            }
-        });
-    });
-
-    // Function to fetch and update counts for badges
-    function fetchCounts() {
-        // This would normally fetch from an API or database
-        // For demo, we'll use some sample data
-        const studentCount = 15;
-        
-        // Update the badge counts
-        document.getElementById('students-count').textContent = studentCount;
-        
-        // Update the dashboard counts
-        document.getElementById('total-students').textContent = studentCount;
-    }
-</script>
+            
+            // Update student count
+            updateStudentCount(sampleData.length);
+            
+            // Setup action buttons
+            setupActionButtons();
+            
+            // Show warning to user
+            const warningRow = document.createElement('tr');
+            warningRow.innerHTML = `
+                <td colspan="7" style="text-align: center; background-color: #fff3cd; color: #856404; padding: 10px;">
+                    <strong>Note:</strong> Showing sample data. Database connection failed. Please contact administrator.
+                </td>
+            `;
+            studentsTable.insertBefore(warningRow, studentsTable.firstChild);
+        }
+    </script>
 </body>
 </html>
