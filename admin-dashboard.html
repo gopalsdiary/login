@@ -235,6 +235,51 @@
             align-items: center;
             margin-top: 1rem;
         }
+        .dropdown-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #e3f2fd, #e8f5e9);
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .dropdown-item-badge {
+            margin-top: 10px;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #fff;
+        }
+
+        .badge-orange {
+            background: #FF9800;
+        }
+
+        .badge-purple {
+            background: #9C27B0;
+        }
     </style>
 </head>
 <body>
@@ -258,23 +303,6 @@
                             </span>
                         </a>
                     </li>
-                    <li>
-                        <a href="#" data-tab="students-list">
-                            <span class="menu-item-content">
-                                <i class="menu-icon">📋</i>
-                                Student List
-                            </span>
-                            <span class="menu-badge" id="students-count">0</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" data-tab="add-student">
-                            <span class="menu-item-content">
-                                <i class="menu-icon">➕</i>
-                                Add Student
-                            </span>
-                        </a>
-                    </li>
                 </ul>
             </div>
             
@@ -282,867 +310,83 @@
                 <!-- Dashboard Panel -->
                 <div id="dashboard-panel" class="tab-panel active">
                     <div class="section-header">
-                        <h2>Dashboard Overview</h2>
+                        <h2>Result Overview</h2>
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-                        <div style="background-color: #e0f2fe; padding: 1.5rem; border-radius: 8px;">
-                            <h3 style="margin-top: 0;">Total Students</h3>
-                            <p id="total-students" style="font-size: 2rem; font-weight: bold; margin: 0;">0</p>
-                        </div>
-                        <div style="background-color: #dcfce7; padding: 1.5rem; border-radius: 8px;">
-                            <h3 style="margin-top: 0;">Last Login</h3>
-                            <p id="last-login" style="font-size: 1.2rem; margin: 0;">Today</p>
-                        </div>
-                    </div>
                     
-                    <div style="margin-top: 2rem;">
-                        <div class="section-header">
-                            <h2>Recent Students</h2>
-                            <button id="view-all-students" class="btn">View All</button>
-                        </div>
-                        
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Father</th>
-                                    <th>Roll Number</th>
-                                    <th>Class</th>
-                                    <th>Section</th>
-                                    <th>IID</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recent-students-table">
-                                <tr><td colspan="7" style="text-align: center;">Loading...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <!-- Students List Panel -->
-                <div id="students-list-panel" class="tab-panel">
-                    <div class="section-header">
-                        <h2>Manage Students</h2>
-                        <button id="add-new-student-btn" class="btn">Add Student</button>
-                    </div>
                     
-                    <div class="search-box">
-                        <input type="text" id="student-search" placeholder="Search by name, roll number, or IID...">
-                        <button id="search-btn" class="btn">Search</button>
+                    <div class="dropdown-content">
+                        <a href="./terminal25/result1.html" class="dropdown-item" id="midterm25-dropdown">
+                            Mid Term Examination 2025
+                            <span class="dropdown-item-badge badge-orange">New</span>
+                        </a>
+
+                        <a href="./ann24/result1.html" class="dropdown-item" id="annual24-dropdown">
+                            Annual Examination 2024
+                            <span class="dropdown-item-badge badge-purple">2024 (ok)</span>
+                        </a>
+
+                        <a href="./terminal24/result1.html" class="dropdown-item" id="annual24-dropdown">
+                            Mid Term Examination 2024
+                            <span class="dropdown-item-badge badge-purple">2024</span>
+                        </a>
+
+                        <a href="./ann23/result1.html" class="dropdown-item" id="annual24-dropdown">
+                            Annual Examination 2023
+                            <span class="dropdown-item-badge badge-purple">2023 (ok)</span>
+                        </a>
+
+                        <a href="./terminal23/result1.html" class="dropdown-item" id="annual24-dropdown">
+                            Mid Term Examination 2023
+                            <span class="dropdown-item-badge badge-purple">2023</span>
+                        </a>
+
+                        <a href="./ann22/result1.html" class="dropdown-item" id="annual24-dropdown">
+                            Annual Examination 2022
+                            <span class="dropdown-item-badge badge-purple">2022</span>
+                        </a>
                     </div>
-                    
-                    <div class="table-container" style="overflow-x: auto; margin-bottom: 1rem; border: 1px solid #eee; border-radius: 4px;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Father</th>
-                                    <th>Roll Number</th>
-                                    <th>Class</th>
-                                    <th>Section</th>
-                                    <th>IID</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="students-table">
-                                <tr><td colspan="7" style="text-align: center;">Loading students data...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="pagination">
-                        <div>
-                            <button id="prev-page" class="btn" style="background-color: #4b5563;">&laquo; Previous</button>
-                            <span id="page-info" style="margin: 0 1rem;">Page 1 of 1</span>
-                            <button id="next-page" class="btn" style="background-color: #4b5563;">Next &raquo;</button>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <label for="page-size">Show:</label>
-                            <select id="page-size">
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                            <span>entries</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Add Student Panel -->
-                <div id="add-student-panel" class="tab-panel">
-                    <div class="section-header">
-                        <h2>Add New Student</h2>
-                    </div>
-                    
-                    <form id="add-student-form">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                            <div class="form-group">
-                                <label for="student-iid">IID (Student ID)*</label>
-                                <input type="text" id="student-iid" required placeholder="Enter Student ID">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="student-roll">Roll Number*</label>
-                                <input type="text" id="student-roll" required placeholder="Enter Roll Number">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="student-name">Full Name*</label>
-                                <input type="text" id="student-name" required placeholder="Enter Full Name">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="student-father">Father*</label>
-                                <input type="text" id="student-father" required placeholder="Enter Father's Name">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="student-class">Class*</label>
-                                <input type="text" id="student-class" required placeholder="Enter Class">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="student-section">Section*</label>
-                                <select id="student-section" required>
-                                    <option value="">Select Section</option>
-                                    <option value="A">Shapla</option>
-                                    <option value="B">Golap</option>
-                                    <option value="C">Morning</option>
-                                    
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group" style="margin-top: 1rem;">
-                            <p id="add-student-error" class="error-message"></p>
-                            <button type="submit" class="btn" style="width: 200px;">Save Student</button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Initialize Supabase client correctly
+        // Initialize Supabase client
         const supabaseUrl = 'https://rtfefxghfbtirfnlbucb.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0ZmVmeGdoZmJ0aXJmbmxidWNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1MDg3OTcsImV4cCI6MjA1NjA4NDc5N30.fb7_myCmFzbV7WPNjFN_NEl4z0sOmRCefnkQbk6c10w';
-        let supabase;
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Variables for pagination
-        let currentPage = 1;
-        let totalPages = 1;
-        let pageSize = 10;
-        let allStudents = []; // Store all students for client-side pagination
-
-        // Directly initialize Supabase client
-        try {
-            supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-            console.log("Supabase client initialized successfully");
-        } catch (error) {
-            console.error("Failed to initialize Supabase client:", error);
-            // Will use sample data as fallback if needed
-        }
-
-        // Wait for document and external scripts to load completely
-        document.addEventListener('DOMContentLoaded', function() {
-            // If supabase is not initialized yet, try again
-            if (!supabase) {
-                try {
-                    supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                    console.log("Supabase client initialized on second attempt");
-                } catch (error) {
-                    console.error("Failed to initialize Supabase client on second attempt:", error);
-                    // Will use sample data
-                }
-            }
-            
-            // Either proceed with real data or use sample data
-            if (supabase) {
-                loadAdminData();
-            } else {
-                useSampleData();
-                document.getElementById('total-students').textContent = "5 (OFFLINE)";
-                updateStudentCount(5);
-                
-                // Show fallback message
-                const messageElement = document.createElement('div');
-                messageElement.style.backgroundColor = '#fff3cd';
-                messageElement.style.color = '#856404';
-                messageElement.style.padding = '10px';
-                messageElement.style.marginBottom = '1rem';
-                messageElement.style.borderRadius = '4px';
-                messageElement.style.textAlign = 'center';
-                messageElement.innerHTML = '<strong>Database connection failed.</strong> Working in offline mode with sample data.';
-                
-                document.querySelector('.main-content').prepend(messageElement);
-            }
-        });
-        
-        // Get admin ID from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const adminId = urlParams.get('id');
-        
         // DOM Elements
-        const adminUsernameElement = document.getElementById('admin-username');
-        const logoutButton = document.getElementById('logout-btn');
-        const totalStudentsElement = document.getElementById('total-students');
-        const lastLoginElement = document.getElementById('last-login');
-        const recentStudentsTable = document.getElementById('recent-students-table');
-        const studentsTable = document.getElementById('students-table');
-        
-        // Tab Navigation
-        document.querySelectorAll('.sidebar-menu a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                // Get tab ID
-                const tabId = link.getAttribute('data-tab');
-                
-                // Remove active class from all links and panels
-                document.querySelectorAll('.sidebar-menu a').forEach(l => l.classList.remove('active'));
-                document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-                
-                // Add active class to clicked link and corresponding panel
-                link.classList.add('active');
-                
-                // Show the selected panel
-                const panel = document.getElementById(`${tabId}-panel`);
-                if (panel) {
-                    panel.classList.add('active');
-                }
-            });
-        });
-        
-        // Button to view all students
-        document.getElementById('view-all-students').addEventListener('click', () => {
-            // Activate the students list tab
-            document.querySelectorAll('.sidebar-menu a').forEach(l => l.classList.remove('active'));
-            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-            
-            const studentsListLink = document.querySelector('.sidebar-menu a[data-tab="students-list"]');
-            if (studentsListLink) {
-                studentsListLink.classList.add('active');
-            }
-            
-            document.getElementById('students-list-panel').classList.add('active');
-        });
-        
-        // Add New Student button on Students List
-        document.getElementById('add-new-student-btn').addEventListener('click', () => {
-            // Activate the add student tab
-            document.querySelectorAll('.sidebar-menu a').forEach(l => l.classList.remove('active'));
-            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-            
-            const addStudentLink = document.querySelector('.sidebar-menu a[data-tab="add-student"]');
-            if (addStudentLink) {
-                addStudentLink.classList.add('active');
-            }
-            
-            document.getElementById('add-student-panel').classList.add('active');
-        });
-        
-        // Update Badge Count
-        function updateStudentCount(count) {
-            const studentsCountBadge = document.getElementById('students-count');
-            
-            if (studentsCountBadge) {
-                studentsCountBadge.textContent = count || 0;
-            }
-            
-            if (totalStudentsElement) {
-                totalStudentsElement.textContent = count || 0;
-            }
-        }
-        
-        // Load admin data
-        async function loadAdminData() {
-            if (!adminId) {
-                console.error('Admin ID is missing in URL');
-                alert('Admin ID is missing. Please login again.');
+        const logoutBtn = document.getElementById('logout-btn');
+        const adminUsername = document.getElementById('admin-username');
+
+        // Logout function
+        async function logout() {
+            try {
+                await supabase.auth.signOut();
+                // Redirect to login page after successful logout
                 window.location.href = './index.html';
-                return;
-            }
-            
-            try {
-                // Get admin data
-                const { data: allAdmins, error: listError } = await supabase
-                    .from('admin')
-                    .select('*');
-                
-                if (listError) {
-                    throw new Error('Error fetching admins: ' + listError.message);
-                }
-                
-                // Find the admin by ID
-                const admin = allAdmins.find(a => String(a.id) === String(adminId));
-                
-                if (!admin) {
-                    throw new Error('Admin not found. Please login again.');
-                }
-                
-                // Update UI
-                adminUsernameElement.textContent = admin.username;
-                
-                // Update last login
-                lastLoginElement.textContent = new Date().toLocaleString();
-                
-                // Load dashboard data
-                loadDashboardData();
-                
             } catch (error) {
-                console.error('Error loading admin data:', error);
-                alert(error.message || 'Failed to load admin data');
-                window.location.href = './index.html';
-            }
-        }
-        
-        // Load Dashboard Data
-        async function loadDashboardData() {
-            try {
-                // Count total students
-                const { count: studentsCount, error: studentsError } = await supabase
-                    .from('students')
-                    .select('*', { count: 'exact', head: true });
-                
-                if (!studentsError) {
-                    updateStudentCount(studentsCount);
-                }
-                
-                // Load recent students
-                const { data: recentStudents, error: recentError } = await supabase
-                    .from('students')
-                    .select('*')
-                    .order('id', { ascending: false })
-                    .limit(5);
-                
-                if (recentError) {
-                    throw recentError;
-                }
-                
-                // Populate recent students table
-                if (recentStudents && recentStudents.length > 0) {
-                    recentStudentsTable.innerHTML = '';
-                    
-                    recentStudents.forEach(student => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${student.name || 'N/A'}</td>
-                            <td>${student.father || 'N/A'}</td>
-                            <td>${student.roll || 'N/A'}</td>
-                            <td>${student.class || 'N/A'}</td>
-                            <td>${student.section || 'N/A'}</td>
-                            <td>${student.iid || 'N/A'}</td>
-                            <td>
-                                <button class="action-btn edit-btn" data-id="${student.id}">Edit</button>
-                                <button class="action-btn delete-btn" data-id="${student.id}">Delete</button>
-                            </td>
-                        `;
-                        recentStudentsTable.appendChild(row);
-                    });
-                } else {
-                    recentStudentsTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">No students found</td></tr>';
-                }
-                
-                // Load all students
-                loadAllStudents();
-                
-            } catch (error) {
-                console.error('Error loading dashboard data:', error);
-            }
-        }
-        
-        // Load All Students - with pagination support
-        async function loadAllStudents() {
-            try {
-                // Show loading message
-                studentsTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">Loading students data...</td></tr>';
-                
-                // First check if the Supabase client is initialized properly
-                if (!supabase) {
-                    throw new Error('Supabase client is not initialized');
-                }
-                
-                console.log('Fetching students data...');
-                
-                // Add a small delay to ensure connection is established
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-                const { data: students, error } = await supabase
-                    .from('students')
-                    .select('*')
-                    .order('name');
-                
-                if (error) {
-                    console.error('Supabase error:', error);
-                    throw error;
-                }
-                
-                console.log('Students data received:', students ? students.length : 0, 'records');
-                
-                // Store all students for pagination
-                allStudents = students || [];
-                
-                // Calculate total pages
-                pageSize = parseInt(document.getElementById('page-size').value, 10);
-                totalPages = Math.ceil(allStudents.length / pageSize);
-                
-                // Display current page
-                displayStudentPage(currentPage);
-                
-                // Update student count
-                updateStudentCount(allStudents.length);
-                
-            } catch (error) {
-                console.error('Error loading students:', error);
-                studentsTable.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Error: ${error.message}</td></tr>`;
-                
-                // Try alternative approach if the first one fails
-                tryAlternativeLoadingMethod();
+                console.error("Logout error:", error);
+                alert('Error logging out. Please try again.');
             }
         }
 
-        // Display a specific page of students
-        function displayStudentPage(page) {
-            // Ensure page is within bounds
-            if (page < 1) page = 1;
-            if (page > totalPages) page = totalPages;
-            
-            // Update current page
-            currentPage = page;
-            
-            // Calculate start and end indices
-            const startIndex = (page - 1) * pageSize;
-            const endIndex = Math.min(startIndex + pageSize, allStudents.length);
-            
-            // Get students for current page
-            const displayedStudents = allStudents.slice(startIndex, endIndex);
-            
-            // Clear table
-            studentsTable.innerHTML = '';
-            
-            if (displayedStudents.length === 0) {
-                studentsTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">No students found</td></tr>';
-                return;
-            }
-            
-            // Display students
-            displayedStudents.forEach(student => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${student.name || 'N/A'}</td>
-                    <td>${student.father || 'N/A'}</td>
-                    <td>${student.roll || 'N/A'}</td>
-                    <td>${student.class || 'N/A'}</td>
-                    <td>${student.section || 'N/A'}</td>
-                    <td>${student.iid || 'N/A'}</td>
-                    <td>
-                        <button class="action-btn edit-btn" data-id="${student.id}">Edit</button>
-                        <button class="action-btn delete-btn" data-id="${student.id}">Delete</button>
-                    </td>
-                `;
-                studentsTable.appendChild(row);
-            });
-            
-            // Update pagination info
-            const pageInfo = document.getElementById('page-info');
-            if (pageInfo) {
-                pageInfo.textContent = `Page ${currentPage} of ${totalPages} (${allStudents.length} records)`;
-            }
-            
-            // Enable/disable pagination buttons
-            const prevPageBtn = document.getElementById('prev-page');
-            const nextPageBtn = document.getElementById('next-page');
-            
-            if (prevPageBtn) {
-                prevPageBtn.disabled = currentPage <= 1;
-                prevPageBtn.style.opacity = currentPage <= 1 ? '0.5' : '1';
-            }
-            
-            if (nextPageBtn) {
-                nextPageBtn.disabled = currentPage >= totalPages;
-                nextPageBtn.style.opacity = currentPage >= totalPages ? '0.5' : '1';
-            }
-            
-            // Setup action buttons
-            setupActionButtons();
-        }
-        
-        // Search functionality
-        document.getElementById('search-btn').addEventListener('click', async () => {
-            const searchQuery = document.getElementById('student-search').value.trim().toLowerCase();
-            
-            if (!searchQuery) {
-                loadAllStudents();
-                return;
-            }
-            
-            try {
-                const { data: students, error } = await supabase
-                    .from('students')
-                    .select('*');
-                
-                if (error) throw error;
-                
-                // Filter students based on search query
-                const filteredStudents = students.filter(student => 
-                    (student.name && student.name.toLowerCase().includes(searchQuery)) || 
-                    (student.roll && student.roll.toLowerCase().includes(searchQuery)) || 
-                    (student.iid && student.iid.toLowerCase().includes(searchQuery)) ||
-                    (student.father && student.father.toLowerCase().includes(searchQuery))
-                );
-                
-                // Update students table with filtered results
-                if (filteredStudents.length > 0) {
-                    studentsTable.innerHTML = '';
-                    
-                    filteredStudents.forEach(student => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${student.name || 'N/A'}</td>
-                            <td>${student.father || 'N/A'}</td>
-                            <td>${student.roll || 'N/A'}</td>
-                            <td>${student.class || 'N/A'}</td>
-                            <td>${student.section || 'N/A'}</td>
-                            <td>${student.iid || 'N/A'}</td>
-                            <td>
-                                <button class="action-btn edit-btn" data-id="${student.id}">Edit</button>
-                                <button class="action-btn delete-btn" data-id="${student.id}">Delete</button>
-                            </td>
-                        `;
-                        studentsTable.appendChild(row);
-                    });
-                    
-                    // Update page info
-                    const pageInfo = document.getElementById('page-info');
-                    if (pageInfo) {
-                        pageInfo.textContent = `Found ${filteredStudents.length} matching records`;
-                    }
-                    
-                    // Setup action buttons
-                    setupActionButtons();
-                } else {
-                    studentsTable.innerHTML = '<tr><td colspan="7" style="text-align: center;">No matching students found</td></tr>';
-                }
-                
-            } catch (error) {
-                console.error('Error searching students:', error);
-                studentsTable.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Error: ${error.message}</td></tr>`;
-            }
-        });
-        
-        // Handle pressing Enter in search box
-        document.getElementById('student-search').addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('search-btn').click();
-            }
-        });
-        
-        // Setup action buttons
-        function setupActionButtons() {
-            // Edit buttons
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const studentId = this.getAttribute('data-id');
-                    editStudent(studentId);
-                });
-            });
-            
-            // Delete buttons
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const studentId = this.getAttribute('data-id');
-                    if (confirm('Are you sure you want to delete this student?')) {
-                        deleteStudent(studentId);
-                    }
-                });
-            });
-        }
-        
-        // Edit student
-        async function editStudent(id) {
-            try {
-                const { data: student, error } = await supabase
-                    .from('students')
-                    .select('*')
-                    .eq('id', id)
-                    .single();
-                
-                if (error) throw error;
-                
-                if (student) {
-                    // Switch to add student tab
-                    document.querySelectorAll('.sidebar-menu a').forEach(l => l.classList.remove('active'));
-                    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
-                    
-                    const addStudentLink = document.querySelector('.sidebar-menu a[data-tab="add-student"]');
-                    if (addStudentLink) {
-                        addStudentLink.classList.add('active');
-                    }
-                    
-                    const panel = document.getElementById('add-student-panel');
-                    if (panel) {
-                        panel.classList.add('active');
-                    }
-                    
-                    // Fill form with student data
-                    document.getElementById('student-iid').value = student.iid || '';
-                    document.getElementById('student-roll').value = student.roll || '';
-                    document.getElementById('student-name').value = student.name || '';
-                    document.getElementById('student-father').value = student.father || '';
-                    document.getElementById('student-class').value = student.class || '';
-                    document.getElementById('student-section').value = student.section || '';
-                    
-                    // Change form submit button to update
-                    const saveBtn = document.querySelector('#add-student-form button[type="submit"]');
-                    if (saveBtn) {
-                        saveBtn.textContent = 'Update Student';
-                        // Add data-id for the update operation
-                        saveBtn.setAttribute('data-id', id);
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching student data:', error);
-                alert('Error fetching student data: ' + error.message);
-            }
-        }
-        
-        // Delete student
-        async function deleteStudent(id) {
-            try {
-                const { error } = await supabase
-                    .from('students')
-                    .delete()
-                    .eq('id', id);
-                
-                if (error) throw error;
-                
-                alert('Student deleted successfully');
-                
-                // Reload students data
-                loadDashboardData();
-                
-            } catch (error) {
-                console.error('Error deleting student:', error);
-                alert('Error deleting student: ' + error.message);
-            }
-        }
-        
-        // Handle form submission for adding/updating student
-        document.getElementById('add-student-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const iid = document.getElementById('student-iid').value;
-            const roll = document.getElementById('student-roll').value;
-            const name = document.getElementById('student-name').value;
-            const father = document.getElementById('student-father').value;
-            const classValue = document.getElementById('student-class').value;
-            const section = document.getElementById('student-section').value;
-            const errorElement = document.getElementById('add-student-error');
-            
-            // Validate form
-            if (!iid || !roll || !name || !father || !classValue || !section) {
-                errorElement.textContent = 'Please fill in all required fields';
-                return;
-            }
-            
-            try {
-                // Check if it's an update or add operation
-                const saveBtn = document.querySelector('#add-student-form button[type="submit"]');
-                const isUpdate = saveBtn.hasAttribute('data-id');
-                
-                if (isUpdate) {
-                    // Update existing student
-                    const studentId = saveBtn.getAttribute('data-id');
-                    
-                    const { error } = await supabase
-                        .from('students')
-                        .update({
-                            iid,
-                            roll,
-                            name,
-                            father,
-                            class: classValue,
-                            section
-                        })
-                        .eq('id', studentId);
-                    
-                    if (error) throw error;
-                    
-                    alert('Student updated successfully');
-                    
-                    // Reset button
-                    saveBtn.textContent = 'Save Student';
-                    saveBtn.removeAttribute('data-id');
-                    
-                } else {
-                    // Add new student
-                    const { error } = await supabase
-                        .from('students')
-                        .insert([{
-                            iid,
-                            roll,
-                            name,
-                            father,
-                            class: classValue,
-                            section
-                        }]);
-                    
-                    if (error) throw error;
-                    
-                    alert('Student added successfully');
-                }
-                
-                // Reset form
-                this.reset();
-                
-                // Reload dashboard data
-                loadDashboardData();
-                
-                // Clear error message
-                errorElement.textContent = '';
-                
-            } catch (error) {
-                console.error('Error saving student:', error);
-                errorElement.textContent = error.message || 'Failed to save student';
-            }
-        });
-        
-        // Pagination controls
-        document.getElementById('prev-page').addEventListener('click', function() {
-            if (currentPage > 1) {
-                displayStudentPage(currentPage - 1);
-            }
-        });
-        
-        document.getElementById('next-page').addEventListener('click', function() {
-            if (currentPage < totalPages) {
-                displayStudentPage(currentPage + 1);
-            }
-        });
-        
-        document.getElementById('page-size').addEventListener('change', function() {
-            pageSize = parseInt(this.value, 10);
-            totalPages = Math.ceil(allStudents.length / pageSize);
-            displayStudentPage(1);
-        });
-        
-        // Logout functionality
-        logoutButton.addEventListener('click', function() {
-            if (confirm('Are you sure you want to logout?')) {
-                window.location.href = './index.html';
-            }
-        });
-        
-        // Initialize the dashboard
-        document.addEventListener('DOMContentLoaded', loadAdminData);
+        // Add event listener for logout button
+        logoutBtn.addEventListener('click', logout);
 
-        // Alternative loading method for students
-        async function tryAlternativeLoadingMethod() {
-            console.log('Trying alternative loading method...');
+        // Display admin username from URL parameter if available
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const adminId = urlParams.get('id');
             
-            try {
-                // Create a new Supabase client instance to ensure fresh connection
-                const altSupabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-                
-                // Try with a simplified query
-                const { data, error } = await altSupabase
-                    .from('students')
-                    .select('id, name, father, roll, class, section, iid')
-                    .limit(100);
-                
-                if (error) {
-                    throw error;
-                }
-                
-                if (data && data.length > 0) {
-                    console.log('Alternative method successful, received', data.length, 'records');
-                    
-                    // Update the table with the data
-                    studentsTable.innerHTML = '';
-                    
-                    data.forEach(student => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${student.name || 'N/A'}</td>
-                            <td>${student.father || 'N/A'}</td>
-                            <td>${student.roll || 'N/A'}</td>
-                            <td>${student.class || 'N/A'}</td>
-                            <td>${student.section || 'N/A'}</td>
-                            <td>${student.iid || 'N/A'}</td>
-                            <td>
-                                <button class="action-btn edit-btn" data-id="${student.id}">Edit</button>
-                                <button class="action-btn delete-btn" data-id="${student.id}">Delete</button>
-                            </td>
-                        `;
-                        studentsTable.appendChild(row);
-                    });
-                    
-                    // Update page info
-                    const pageInfo = document.getElementById('page-info');
-                    if (pageInfo) {
-                        pageInfo.textContent = `Page 1 of 1 (${data.length} records)`;
-                    }
-                    
-                    // Update student count
-                    updateStudentCount(data.length);
-                    
-                    // Setup action buttons
-                    setupActionButtons();
-                } else {
-                    // If still no data, try direct sample data approach as last resort
-                    useSampleData();
-                }
-            } catch (error) {
-                console.error('Alternative loading method failed:', error);
-                useSampleData();
+            if (adminId) {
+                // You could fetch admin details here if needed
+                // For now, just showing generic "Admin" text which is already in the HTML
             }
-        }
-
-        // Last resort - use sample data
-        function useSampleData() {
-            console.log('Using sample data as fallback');
-            
-          
-            
-            // Update the table with sample data
-            studentsTable.innerHTML = '';
-            
-            sampleData.forEach(student => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${student.name || 'N/A'}</td>
-                    <td>${student.father || 'N/A'}</td>
-                    <td>${student.roll || 'N/A'}</td>
-                    <td>${student.class || 'N/A'}</td>
-                    <td>${student.section || 'N/A'}</td>
-                    <td>${student.iid || 'N/A'}</td>
-                    <td>
-                        <button class="action-btn edit-btn" data-id="${student.id}">Edit</button>
-                        <button class="action-btn delete-btn" data-id="${student.id}">Delete</button>
-                    </td>
-                `;
-                studentsTable.appendChild(row);
-            });
-            
-            // Update student count
-            updateStudentCount(sampleData.length);
-            
-            // Setup action buttons
-            setupActionButtons();
-            
-            // Show warning to user
-            const warningRow = document.createElement('tr');
-            warningRow.innerHTML = `
-                <td colspan="7" style="text-align: center; background-color: #fff3cd; color: #856404; padding: 10px;">
-                    <strong>Note:</strong> Showing sample data. Database connection failed. Please contact administrator.
-                </td>
-            `;
-            studentsTable.insertBefore(warningRow, studentsTable.firstChild);
-        }
+        });
     </script>
+
 </body>
 </html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Result Details - Feni South-East College</title>
+    <link rel="stylesheet" href="./style1.css">
+    <style>
+        /* Hide header in print mode and show pad image instead */
+        @media print {
+            .header {
+                display: none !important;
+            }
+            .print-btn {
+                display: none !important;
+            }
+            .pad-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+            .container {
+                margin-top: 0 !important;
+                /* Scale down the content by 10% */
+                transform: scale(0.95);
+                transform-origin: top center;
+            }
+            body {
+                padding: 0;
+                margin: 0;
+                /* Add extra space to accommodate the scaled-down content */
+                height: 80%;
+                width: 100%;
+            }
+            /* Adjust font sizes for better readability at smaller scale */
+            .marksheet {
+                font-size: 100% !important;
+            }
+            table {
+                width: 100% !important;
+                margin: 0 auto;
+            }
+            /* Ensure highlight box stays properly formatted */
+            .highlight-box {
+                width: 100% !important;
+                margin: 15px auto !important;
+            }
+        }
+        .pad-header {
+            display: none;
+            width: 100%;
+        }
+        .pad-header img {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Feni Model High School</h1>
+        <p>Terminal Examination Report Card-2023</p>
+    </div>
+
+    <div class="pad-header">
+        <img src="./pad.png" alt="School Letterhead">
+    </div>
+
+    <div class="container">
+        <div class="marksheet" id="marksheetContent">
+            <p>Loading result...</p>
+        </div>
+        <button class="print-btn" onclick="window.print()">Print</button>
+    </div>
+
+    <script>
+
+
+const SHEET_URL_BASE = './'; // Current directory where we are
+        const sheetIDs =  'ann23.csv'; // Added 
+        // missing quotes
+let students = [];
+let headers = [];
+let SUBJECT_MAP = {};
+let currentStudent = null;
+
+function goBack() {
+    // Go back to the results page
+    window.location.href = 'result1.html';
+}
+
+async function loadStudentData() {
+    const params = new URLSearchParams(window.location.search);
+    const iid = params.get('iid');
+
+    if (!iid) {
+        showError('Missing student ID. Please go back and try again.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${SHEET_URL_BASE}${sheetIDs}`);
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+        const csvData = await response.text();
+        const rows = csvData.split('\n').filter(row => row.trim() !== '');
+
+        headers = rows[0].split(',').map(h => h.trim().replace(/"/g, ''));
+        generateSubjectMap(headers);
+
+        students = rows.slice(1).map(row => {
+            const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            const student = {};
+            headers.forEach((header, index) => {
+                const cleanHeader = header.replace(/\*/g, '').trim().replace(/ /g, '_').toLowerCase();
+                student[cleanHeader] = values[index] ? values[index].replace(/(^"|"$)/g, '').trim() : '';
+            });
+            return student;
+        });
+
+        const student = students.find(s => s.iid === iid || s.roll === iid);
+        if (student) {
+            currentStudent = student;
+            displayStudentDetails(student);
+        } else {
+            showError('Student not found with the specified ID.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showError('দুঃখিত! ডেটা লোড করতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
+    }
+}
+
+function generateSubjectMap(headers) {
+    const subjects = new Set();
+    headers.forEach(header => {
+        const match = header.match(/^(.*?)(_CQ|_MCQ|_WRITTEN|_CA|_Practical|_Total|_GPA)$/);
+        if (match) {
+            subjects.add(match[1]);
+        }
+    });
+
+    subjects.forEach(subject => {
+        SUBJECT_MAP[subject] = {
+            CQ: headers.find(h => h.includes(`${subject}_CQ`)) || '',
+            MCQ: headers.find(h => h.includes(`${subject}_MCQ`)) || '',
+            WRITTEN: headers.find(h => h.includes(`${subject}_WRITTEN`)) || '',
+            CA: headers.find(h => h.includes(`${subject}_CA`)) || '',
+            Practical: headers.find(h => h.includes(`${subject}_Practical`)) || '',
+            Total: headers.find(h => h.includes(`${subject}_Total`)) || '',
+            GPA: headers.find(h => h.includes(`${subject}_GPA`)) || ''
+        };
+    });
+}
+
+function displayStudentDetails(student) {
+    const content = document.getElementById('marksheetContent');
+    
+    // Update with more comprehensive details like in script.csv
+    content.innerHTML = `
+        <h2>${student.name || 'N/A'}</h2>
+        <p>Father's Name: ${student.fathers_name || 'N/A'}</p>
+        <p>Roll: ${student.roll || 'N/A'} | Class: ${student.class || '12'} | Shift: ${student.shift || 'N/A'}</p>
+        <p>Mobile Number: ${student.mobile || 'N/A'} | IID: ${student.iid || 'N/A'}</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    ${SUBJECT_MAP[Object.keys(SUBJECT_MAP)[0]].WRITTEN ? '<th>WRITTEN</th>' : '<th>CQ</th>'}
+                    ${SUBJECT_MAP[Object.keys(SUBJECT_MAP)[0]].CA ? '<th>CA</th>' : '<th>MCQ</th>'}
+                    <th>Total</th>
+                    <th>GPA</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${Object.entries(SUBJECT_MAP).map(([subject, cols]) => {
+                    // Get the column names that exist in the data
+                    const column1 = cols.WRITTEN ? 'WRITTEN' : 'CQ';
+                    const column2 = cols.CA ? 'CA' : 'MCQ';
+                    
+                    const cleanColumn1 = cols[column1].replace(/\*/g, '').replace(/ /g, '_').toLowerCase();
+                    const cleanColumn2 = cols[column2].replace(/\*/g, '').replace(/ /g, '_').toLowerCase();
+                    const cleanTotal = cols.Total.replace(/\*/g, '').replace(/ /g, '_').toLowerCase();
+                    const cleanGPA = cols.GPA.replace(/\*/g, '').replace(/ /g, '_').toLowerCase();
+                    
+                    if (!student[cleanColumn1] && !student[cleanColumn2] && !student[cleanTotal] && !student[cleanGPA]) {
+                        return '';
+                    }
+
+                    return `
+                    <tr>
+                        <td>${subject.replace(/\*/g, '')}</td>
+                        <td>${student[cleanColumn1] || '-'}</td>
+                        <td>${student[cleanColumn2] || '-'}</td>
+                        <td>${student[cleanTotal] || '-'}</td>
+                        <td>${student[cleanGPA] || '-'}</td>
+                    </tr>
+                    `;
+                }).join('')}
+            </tbody>
+        </table>
+
+        <div class="highlight-box">
+            ${student.gpa ? `<div class="highlight-item"><p>GPA</p><p>${student.gpa}</p></div>` : ''}
+            ${student.remark ? `<div class="highlight-item"><p>Remark</p><p>${student.remark}</p></div>` : ''}
+            ${student.ranking ? `<div class="highlight-item"><p>Rank</p><p>${student.ranking}</p></div>` : ''}
+        </div>
+
+        <p style="margin-top: 20px; font-weight: bold;">
+            ${student.total_mark ? `Total Marks: ${student.total_mark} | ` : ''}
+            ${student.average ? `Average Mark: ${student.average} | ` : ''}
+            ${student.absent ? `Absent subject: ${student.absent}` : ''}
+        </p>
+
+        <p style="margin-top: 5px; font-weight: regular; text-align: left; font-size: 0.8em;">
+            নির্দেশনা :
+        </p>
+        <p style="margin-top: 0px; font-weight: regular; text-align: left; font-size: 0.8em;">
+            নতুন শিক্ষাবর্ষে জানুয়ারির ১ম সপ্তাহে নতুন শ্রেণিতে ভর্তি হয়ে নতুন বই সংগ্রহ করতে হবে।
+ভর্তির সময় মার্কশীটের ফটোকপি অবশ্যই আনতে হবে।  
+        </p>
+        <p style="margin-top: 0px; font-weight: regular; text-align: left; font-size: 0.8em;">
+            গ্রহনযোগ্য কারন উল্লেখ করে প্রয়োজনীয় ক্ষেত্রে অগ্রিম ছুটি নিতে হবে। পূর্বানুমতি ছাড়া এক 
+টানা ১০ দিন ক্লাসে অনুপস্থিত থাকলে হাজিরা বহিতে নাম কাটা যাবে。
+        </p>`;
+
+    // Update page title with student name
+    document.title = `${student.name} - Result Details`;
+}
+
+function showError(message) {
+    const content = document.getElementById('marksheetContent');
+    content.innerHTML = `
+        <div class="error-message">
+            <h3>Error</h3>
+            <p>${message}</p>
+        </div>
+    `;
+}
+
+// Load data on page load
+window.addEventListener('DOMContentLoaded', loadStudentData);
+
+// Security measures
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'hidden') {
+        document.body.style.display = 'none';
+    } else {
+        document.body.style.display = 'block';
+    }
+});
+
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+document.addEventListener('keydown', e => {
+    if ((e.ctrlKey && ['u', 's', 'p', 'Shift', 'I'].includes(e.key)) || e.key === 'F12' || e.key === 'PrintScreen') {
+        e.preventDefault();
+    }
+});
+
+// Allow printing
+window.onafterprint = function() {
+    document.body.style.display = 'block';
+};
+    </script>
+</body>
+</html>

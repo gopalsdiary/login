@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #9381ff;
+            --primary-color: #98dadf;
             --purple-light: #e8e6ff;
             --green-color: #61dea4;
             --green-light: #e7f9f1;
@@ -16,11 +16,10 @@
             --orange-light: #fff4e8;
             --text-primary: #333;
             --text-secondary: #666;
-            --text-light: #9991c7;
+            --text-light: #abd8b1;
             --bg-color: #f6f6ff;
             --radius-lg: 20px;
             --radius-md: 16px;
-            --radius-sm: 8px;
             --shadow-soft: 0 10px 30px rgba(147, 129, 255, 0.1);
             --transition-smooth: all 0.3s ease;
         }
@@ -58,7 +57,7 @@
         h1 {
             font-weight: 600;
             font-size: 1.8rem;
-            background: linear-gradient(135deg, #9381ff, #b8b8ff);
+            background: linear-gradient(135deg, #a9f2ff, #b8b8ff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -360,65 +359,49 @@
         }
 
         .dropdown-content {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            min-width: 220px;
-            background-color: white;
-            border-radius: var(--radius-md);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            z-index: 10;
-            overflow: hidden;
-            visibility: hidden;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.2s ease;
-        }
-
-        .dropdown:hover .dropdown-content {
-            visibility: visible;
-            opacity: 1;
-            transform: translateY(5px);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .dropdown-item {
-            padding: 0.8rem 1.2rem;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            color: var(--text-primary);
-            transition: var(--transition-smooth);
-            font-size: 0.95rem;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .dropdown-item:last-child {
-            border-bottom: none;
+            justify-content: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #e3f2fd, #e8f5e9);
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .dropdown-item:hover {
-            background-color: var(--purple-light);
-            color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
 
         .dropdown-item-badge {
-            font-size: 0.75rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 20px;
-            color: white;
-            font-weight: 500;
-        }
-
-        .badge-purple {
-            background-color: var(--primary-color);
-        }
-
-        .badge-green {
-            background-color: var(--green-color);
+            margin-top: 10px;
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #fff;
         }
 
         .badge-orange {
-            background-color: var(--orange-color);
+            background: #FF9800;
+        }
+
+        .badge-purple {
+            background: #9C27B0;
         }
 
         .dropdown-icon {
@@ -444,33 +427,7 @@
                             <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
                     </div>
-                    <div class="dropdown-content">
-                        <a href="#" class="dropdown-item" id="midterm25-dropdown">
-                            Mid Term Examination 2025
-                            <span class="dropdown-item-badge badge-orange">New</span>
-                        </a>
-
-                        <a href="./ann24/details.html" class="dropdown-item" id="annual24-dropdown">
-                            Annual Examination 2024
-                            <span class="dropdown-item-badge badge-purple">2024</span>
-                     
-
-                        <a href="./terminal24/details.html" class="dropdown-item" id="annual24-dropdown">
-                            Mid Term Examination 2024
-                            <span class="dropdown-item-badge badge-purple">2024</span>
-
-                            <a href="./ann23/details.html" class="dropdown-item" id="annual24-dropdown">
-                                Annual Examination 2023
-                                <span class="dropdown-item-badge badge-purple">2023</span>
-
-                                <a href="./terminal23/details.html" class="dropdown-item" id="annual24-dropdown">
-                                    Mid Term Examination 2023
-                                <span class="dropdown-item-badge badge-purple">2023</span>  
-
-                                <a href="./ann22/details.html" class="dropdown-item" id="annual24-dropdown">
-                                    Annual Examination 2022
-                                    <span class="dropdown-item-badge badge-purple">2022</span>                       
-                    </div>
+                    
                 </div>
             </div>
             <button class="logout-btn" id="logout-btn">Logout</button>
@@ -493,6 +450,38 @@
                     <div class="result-menu" id="result-menu">
                         <!-- ...existing code... -->
                     </div>
+                </div>
+
+                <div class="dropdown-content">
+                    <a href="#" class="dropdown-item" id="midterm25-dropdown">
+                        Mid Term Examination 2025
+                        <span class="dropdown-item-badge badge-orange">New</span>
+                    </a>
+
+                    <a href="./ann24/details.html" class="dropdown-item" id="annual24-dropdown">
+                        Annual Examination 2024
+                        <span class="dropdown-item-badge badge-purple">2024</span>
+                    </a>
+
+                    <a href="./terminal24/details.html" class="dropdown-item" id="annual24-dropdown">
+                        Mid Term Examination 2024
+                        <span class="dropdown-item-badge badge-purple">2024</span>
+                    </a>
+
+                    <a href="./ann23/details.html" class="dropdown-item" id="annual24-dropdown">
+                        Annual Examination 2023
+                        <span class="dropdown-item-badge badge-purple">2023</span>
+                    </a>
+
+                    <a href="./terminal23/details.html" class="dropdown-item" id="annual24-dropdown">
+                        Mid Term Examination 2023
+                        <span class="dropdown-item-badge badge-purple">2023</span>
+                    </a>
+
+                    <a href="./ann22/details.html" class="dropdown-item" id="annual24-dropdown">
+                        Annual Examination 2022
+                        <span class="dropdown-item-badge badge-purple">2022</span>
+                    </a>
                 </div>
             </div>
         </div>
