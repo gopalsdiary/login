@@ -80,16 +80,42 @@
             background-color: #4338ca;
         }
         .error-message {
-            color: red;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
+            color: #842029;
+            background-color: #f8d7da;
+            border: 1px solid #f5c2c7;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
             display: none;
         }
         .success-message {
-            color: green;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
+            color: #0f5132;
+            background-color: #d1e7dd;
+            border: 1px solid #badbcc;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
             display: none;
+        }
+        .message-icon {
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .unauthorized-alert {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                opacity: 1;
+            }
         }
     </style>
 </head>
@@ -142,6 +168,68 @@
         const supabaseUrl = 'https://rtfefxghfbtirfnlbucb.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0ZmVmeGdoZmJ0aXJmbmxidWNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1MDg3OTcsImV4cCI6MjA1NjA4NDc5N30.fb7_myCmFzbV7WPNjFN_NEl4z0sOmRCefnkQbk6c10w';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Check for error parameters in URL on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorParam = urlParams.get('error');
+            
+            if (errorParam) {
+                const studentErrorMsg = document.getElementById('student-error-message');
+                
+                // Handle different error types
+                switch(errorParam) {
+                    case 'unauthorized':
+                        showMessage(studentErrorMsg, 'Your session has expired or you are not authorized. Please login again.', true);
+                        break;
+                    case 'auth':
+                        showMessage(studentErrorMsg, 'Authentication error. Please login again.', true);
+                        break;
+                    case 'account':
+                        showMessage(studentErrorMsg, 'Your account could not be found. Please check your credentials.');
+                        break;
+                    case 'session':
+                        showMessage(studentErrorMsg, 'Your session has expired. Please login again.', true);
+                        break;
+                    default:
+                        showMessage(studentErrorMsg, 'An error occurred. Please try again.');
+                }
+                
+                // Remove the error parameter from URL to prevent showing the error message again on refresh
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            }
+            
+            // Check if user already has an active session
+            checkExistingSession();
+        });
+        
+        // Check if user already has a valid session
+        async function checkExistingSession() {
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (session) {
+                    // User is already logged in, get their IID and redirect
+                    const { data: student, error: studentError } = await supabase
+                        .from('students')
+                        .select('iid')
+                        .eq('email', session.user.email)
+                        .single();
+                    
+                    if (student && student.iid) {
+                        const successMsg = document.getElementById('student-success-message');
+                        showMessage(successMsg, 'You are already logged in. Redirecting...');
+                        
+                        setTimeout(() => {
+                            window.location.href = `./student-dashboard.html?iid=${student.iid}`;
+                        }, 1500);
+                    }
+                }
+            } catch (error) {
+                console.error("Error checking session:", error);
+            }
+        }
 
         // Tab switching functionality
         document.querySelectorAll('.tab-button').forEach(button => {
@@ -202,12 +290,21 @@
                     throw new Error("Invalid mobile number or roll number. Please check your credentials.");
                 }
                 
+                // Create a session for the student using magic link 
+                // We'll create a persistent session by storing the student's IID in localStorage
+                localStorage.setItem('authorized_iid', matchingStudent.iid);
+                
+                // For students without email, we'll create a token in localStorage
+                // Generate a simple auth token
+                const authToken = Date.now() + '-' + Math.random().toString(36).substring(2);
+                localStorage.setItem('student_auth_token', authToken);
+                
                 // Success
                 showMessage(successMsg, 'Login successful! Redirecting...');
                 
-                // Redirect to student details page
+                // Redirect to student dashboard page
                 setTimeout(() => {
-                    window.location.href = `./details.html?iid=${matchingStudent.iid}`;
+                    window.location.href = `./student-dashboard.html?iid=${matchingStudent.iid}`;
                 }, 1000);
                 
             } catch (error) {
@@ -311,14 +408,38 @@
         });
 
         // Helper function to show error/success messages
-        function showMessage(element, message) {
-            element.textContent = message;
+        function showMessage(element, message, isUnauthorized = false) {
+            // Clear existing content
+            element.innerHTML = "";
+            
+            // Add appropriate icon based on message type
+            if (element.classList.contains('error-message')) {
+                const iconHTML = '<svg class="message-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>';
+                element.innerHTML = iconHTML;
+            } else {
+                const iconHTML = '<svg class="message-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>';
+                element.innerHTML = iconHTML;
+            }
+            
+            // Add the message text
+            element.innerHTML += " " + message;
+            
+            // Add unauthorized class if needed
+            if (isUnauthorized) {
+                element.classList.add('unauthorized-alert');
+            } else {
+                element.classList.remove('unauthorized-alert');
+            }
+            
+            // Show the element
             element.style.display = 'block';
             
-            // Hide after 5 seconds
+            // Hide after 8 seconds for error messages, 3 seconds for success messages
+            const timeout = element.classList.contains('error-message') ? 8000 : 3000;
             setTimeout(() => {
                 element.style.display = 'none';
-            }, 5000);
+                element.classList.remove('unauthorized-alert');
+            }, timeout);
         }
     </script>
 </body>
