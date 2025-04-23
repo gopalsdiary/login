@@ -8,8 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #4E54C8;       /* Main primary color - deep blue/purple */
-            --secondary-color: #8F94FB;     /* Secondary color - lighter purple */
+            --primary-color: #53b0e6;       /* Main primary color - deep blue/purple */
+            --secondary-color: #7c7a0d;     /* Secondary color - lighter purple */
             --accent-color: #FF6B6B;        /* Accent color - coral/salmon */
             
             --primary-light: #eceeff;
@@ -110,96 +110,6 @@
             border-radius: 2px;
         }
         
-        .result-cards {
-            display: flex;
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-            flex-wrap: wrap;
-        }
-        
-        .result-card {
-            flex: 1;
-            min-width: 180px;
-            padding: 1.5rem;
-            border-radius: var(--radius-md);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            transition: var(--transition-smooth);
-        }
-        
-        .result-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(78, 84, 200, 0.15);
-        }
-        
-        .result-card.annual {
-            background-color: var(--primary-light);
-            border-top: 3px solid var(--primary-color);
-        }
-        
-        .result-card.terminal {
-            background-color: var(--secondary-light);
-            border-top: 3px solid var(--secondary-color);
-        }
-        
-        .result-card.midterm {
-            background-color: var(--accent-light);
-            border-top: 3px solid var(--accent-color);
-        }
-        
-        .result-card-title {
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            letter-spacing: 0.5px;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-        
-        .result-card.annual .result-card-title {
-            color: var(--primary-color);
-        }
-        
-        .result-card.terminal .result-card-title {
-            color: var(--secondary-color);
-        }
-        
-        .result-card.midterm .result-card-title {
-            color: var(--accent-color);
-        }
-        
-        .view-result-btn {
-            padding: 0.7rem 1.5rem;
-            border-radius: 50px;
-            border: none;
-            color: white;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition-smooth);
-            width: 100%;
-            text-align: center;
-        }
-        
-        .result-card.annual .view-result-btn {
-            background-color: var(--primary-color);
-        }
-        
-        .result-card.terminal .view-result-btn {
-            background-color: var(--secondary-color);
-        }
-        
-        .result-card.midterm .view-result-btn {
-            background-color: var(--accent-color);
-        }
-        
-        .view-result-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-
         .student-info {
             background-color: white;
             border-radius: var(--radius-md);
@@ -250,95 +160,61 @@
             border-left: 3px solid var(--accent-color);
         }
 
-        .result-menu {
-            margin-top: 2rem;
-            background-color: var(--primary-light);
+        .dropdown-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            background: white;
             border-radius: var(--radius-md);
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(78, 84, 200, 0.08);
+            box-shadow: 0 10px 30px rgba(78, 84, 200, 0.15);
+            margin-top: 20px;
         }
 
-        .result-menu-header {
-            padding: 1rem 1.5rem;
+        .dropdown-item {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            cursor: pointer;
-            border-bottom: 1px solid rgba(78, 84, 200, 0.2);
-            background: linear-gradient(90deg, var(--primary-light), var(--secondary-light));
-        }
-
-        .result-menu-title {
-            font-weight: 600;
-            font-size: 1rem;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-light), var(--secondary-light));
+            border-radius: var (--radius-md);
+            text-decoration: none;
             color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
         }
 
-        .result-menu-icon {
-            transition: transform 0.3s ease;
-            color: var(--primary-color);
+        .dropdown-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(78, 84, 200, 0.2);
         }
 
-        .result-menu.open .result-menu-icon {
-            transform: rotate(180deg);
-        }
-
-        .result-menu-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .result-menu.open .result-menu-content {
-            max-height: 500px;
-        }
-
-        .result-item {
-            padding: 1rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(78, 84, 200, 0.1);
-            transition: background-color 0.2s ease;
-        }
-
-        .result-item:hover {
-            background-color: var(--secondary-light);
-        }
-
-        .result-item:last-child {
-            border-bottom: none;
-        }
-
-        .show-result-btn {
-            padding: 0.5rem 1rem;
-            background-color: white;
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 500;
+        .dropdown-item-badge {
+            margin-top: 10px;
+            padding: 5px 10px;
+            border-radius: 12px;
             font-size: 0.8rem;
-            transition: var(--transition-smooth);
+            color: white;
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
 
-        .show-result-btn:hover {
-            background-color: var(--primary-color);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(78, 84, 200, 0.15);
+        .badge-orange {
+            background: var(--accent-color);
+            box-shadow: 0 2px 5px rgba(255, 107, 107, 0.3);
+        }
+
+        .badge-purple {
+            background: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(78, 84, 200, 0.3);
         }
 
         @media (max-width: 768px) {
             .content {
                 padding: 1.5rem;
-            }
-            
-            .result-cards {
-                flex-direction: column;
             }
             
             .header {
@@ -354,6 +230,10 @@
             
             .info-label {
                 min-width: auto;
+            }
+            
+            .dropdown-content {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -473,11 +353,6 @@
                     <div class="student-info" id="dynamic-student-info">
                         <!-- Student details will be populated dynamically here -->
                     </div>
-                    
-                    <!-- Result Menu -->
-                    <div class="result-menu" id="result-menu">
-                        <!-- ...existing code... -->
-                    </div>
                 </div>
 
                 <div class="dropdown-content">
@@ -527,6 +402,11 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0ZmVmeGdoZmJ0aXJmbmxidWNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA1MDg3OTcsImV4cCI6MjA1NjA4NDc5N30.fb7_myCmFzbV7WPNjFN_NEl4z0sOmRCefnkQbk6c10w';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+        // Session timeout variables
+        const SESSION_TIMEOUT = 15 * 60 * 1000; // 15 minutes in milliseconds
+        let sessionTimer = null;
+        let lastActivity = Date.now();
+
         // DOM Elements
         const loadingElement = document.getElementById('loading');
         const studentDetailsElement = document.getElementById('student-details');
@@ -536,6 +416,25 @@
         // Get iid from URL
         const urlParams = new URLSearchParams(window.location.search);
         const iid = urlParams.get('iid');
+        
+        // Session timeout functions
+        function resetSessionTimer() {
+            lastActivity = Date.now();
+            clearTimeout(sessionTimer);
+            sessionTimer = setTimeout(sessionExpired, SESSION_TIMEOUT);
+        }
+
+        function sessionExpired() {
+            alert("Your session has expired due to inactivity. Please login again.");
+            logout();
+        }
+
+        // Setup event listeners to track user activity
+        function setupActivityTracking() {
+            ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+                document.addEventListener(event, resetSessionTimer, false);
+            });
+        }
         
         // Check for auth token on page load
         async function checkAuth() {
@@ -733,29 +632,6 @@
         // Fetch student details when page loads
         document.addEventListener('DOMContentLoaded', fetchStudentDetails);
 
-        // Result menu functionality
-        const resultMenu = document.getElementById('result-menu');
-        const resultMenuHeader = document.getElementById('result-menu-header');
-        
-        // Toggle result menu open/close
-        resultMenuHeader.addEventListener('click', () => {
-            resultMenu.classList.toggle('open');
-        });
-        
-        // Set up show result buttons
-        const showResultBtns = document.querySelectorAll('.show-result-btn');
-        showResultBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const url = btn.dataset.url;
-                if (url && url !== '#') {
-                    navigateToResult(url); // Use the secure navigation function
-                } else {
-                    // Show a message for results that aren't available yet
-                    alert('This result is not available yet. Please check back later.');
-                }
-            });
-        });
-
         // Set up event handlers for all dropdown links
         document.querySelectorAll('.dropdown-item').forEach(link => {
             // Skip links that already have an event or are just "#" placeholders
@@ -784,6 +660,10 @@
             // Recheck authentication when the user navigates with browser controls
             await checkAuth();
         });
+
+        // Initialize session timeout tracking
+        setupActivityTracking();
+        resetSessionTimer();
     </script>
 </body>
 </html>
