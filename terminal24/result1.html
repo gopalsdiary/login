@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feni South-East College Results 2024</title>
+    <title>Feni Model High School</title>
     <link rel="stylesheet" href="./style1.css">
 </head>
 <body>
@@ -23,8 +23,8 @@
 
     <script>
         const SHEET_URL_BASE = './'; // Current directory where we are
-        const sheetIDs =  'ann23.csv'; // Added 
-        // missing quotes
+        const sheetIDs = ['file1.csv', 'file2.csv', 'file3.csv', 'file4.csv', 'file5.csv']; // Multiple CSV files
+
         let students = [];
         let headers = [];
         let SUBJECT_MAP = {};
@@ -32,31 +32,46 @@
 
         async function loadData() {
             try {
-                const response = await fetch(`${SHEET_URL_BASE}${sheetIDs}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const csvData = await response.text();
-                const rows = csvData.split('\n').filter(row => row.trim() !== '');
-
-                // Process headers
-                headers = rows[0].split(',').map(h => h.trim().replace(/"/g, '')); 
-
-                // Dynamically generate SUBJECT_MAP
-                generateSubjectMap(headers);
-
-                // Process student data
-                students = rows.slice(1).map(row => {
-                    const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    const student = {};
-                    headers.forEach((header, index) => {
-                        const cleanHeader = header.replace(/\*/g, '').trim().replace(/ /g, '_').toLowerCase();
-                        student[cleanHeader] = values[index] ? values[index].replace(/(^"|"$)/g, '').trim() : '';
+                // Load data from all CSV files
+                let allStudents = [];
+                
+                // Process each file one by one
+                for (const fileId of sheetIDs) {
+                    const response = await fetch(`${SHEET_URL_BASE}${fileId}`);
+                    if (!response.ok) {
+                        console.warn(`Could not load ${fileId}, skipping...`);
+                        continue;
+                    }
+                    
+                    const csvData = await response.text();
+                    const rows = csvData.split('\n').filter(row => row.trim() !== '');
+                    
+                    if (rows.length === 0) continue;
+                    
+                    // Process headers (use headers from the first file that has data)
+                    if (headers.length === 0) {
+                        headers = rows[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                        // Dynamically generate SUBJECT_MAP
+                        generateSubjectMap(headers);
+                    }
+                    
+                    // Process student data
+                    const fileStudents = rows.slice(1).map(row => {
+                        const values = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                        const student = {};
+                        headers.forEach((header, index) => {
+                            const cleanHeader = header.replace(/\*/g, '').trim().replace(/ /g, '_').toLowerCase();
+                            student[cleanHeader] = values[index] ? values[index].replace(/(^"|"$)/g, '').trim() : '';
+                        });
+                        return student;
                     });
-                    return student;
-                });
-
+                    
+                    allStudents = allStudents.concat(fileStudents);
+                }
+                
+                students = allStudents;
                 renderStudentList(students);
+                
             } catch (error) {
                 console.error('Error:', error);
                 alert('ডেটা লোড করতে সমস্যা হয়েছে! অনুগ্রহ করে আবার চেষ্টা করুন।');
